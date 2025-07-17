@@ -56,6 +56,27 @@
             min-width: 0;
             flex: 0 0 100%;
         }
+        .carousel-item {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .carousel-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+            width: 100%;
+            padding: 15px;
+            box-sizing: border-box;
+        }
         .carousel-controls button {
             position: absolute;
             top: 50%;
@@ -86,11 +107,52 @@
                 flex: 0 0 100%;
             }
         }
+
+        /* Ajuste para eliminar el espacio entre secciones */
+        main > section:first-child {
+            margin-bottom: 0;
+        }
+        #clases {
+            margin-top: 0;
+            padding-top: 0;
+        }
+
+        /* Estilos para el menú de paleta */
+        .palette-menu {
+            display: none;
+            position: absolute;
+            top: 60px;
+            right: 10px;
+            background-color: #fff;
+            border-radius: 4px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 1000;
+            padding: 10px;
+        }
+        .palette-menu.active {
+            display: block;
+        }
+        .color-option {
+            width: 30px;
+            height: 30px;
+            display: inline-block;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+
+        /* Color por defecto del menú principal */
+        nav a {
+            color: #f4a261 !important;
+        }
     </style>
 </head>
 
 <body class="font-body antialiased">
-<div class="flex flex-col min-h-dvh bg-background">
+<div class="flex flex-col min-h-dvh bg-background" id="pageBody">
     <header class="px-4 lg:px-6 h-20 flex items-center fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-transparent">
         <a class="flex items-center justify-center mr-6" href="/"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-user h-8 w-8 text-primary">
             <path d="M15 13a3 3 0 1 0-6 0"></path>
@@ -103,7 +165,7 @@
                     <ul data-orientation="horizontal" class="group flex flex-1 list-none items-center justify-center space-x-1" dir="ltr">
                         <li><a class="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50" data-radix-collection-item="" href="/#clases">Clases</a></li>
                         <li class="dropdown">
-                            <button class="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50" data-radix-collection-item="">Cursos <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down relative top-[1px] ml-1 h-3 w-3 transition duration-200" aria-hidden="true">
+<button class="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50" data-radix-collection-item="" style="color: #f4a261;">Cursos <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down relative top-[1px] ml-1 h-3 w-3 transition duration-200" aria-hidden="true">
                                 <path d="m6 9 6 6 6-6"></path>
                             </svg></button>
                             <div class="dropdown-content">
@@ -117,60 +179,69 @@
                         <li><a class="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50" data-radix-collection-item="" href="/#contacto">Contacto</a></li>
                     </ul>
                 </div>
-            </nav><button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 w-10"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-palette h-[1.2rem] w-[1.2rem]">
-            <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
-            <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
-            <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
-            <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
-            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"></path>
-        </svg></button>
+            </nav>
+            <button class="palette-btn inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 w-10" id="paletteButton">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-palette h-[1.2rem] w-[1.2rem]">
+                    <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
+                    <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
+                    <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
+                    <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
+                    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"></path>
+                </svg>
+            </button>
+            <div class="palette-menu" id="paletteMenu">
+                <div class="color-option" style="background-color: #f4a261" data-color="#f4a261"></div>
+                <div class="color-option" style="background-color: #4682b4" data-color="#4682b4"></div>
+                <div class="color-option" style="background-color: #2e7d32" data-color="#2e7d32"></div>
+                <div class="color-option" style="background-color: #6d4c41" data-color="#6d4c41"></div>
+            </div>
         </div>
     </header>
     <main class="flex-1">
-        <section class="relative w-full h-dvh min-h-[600px] flex items-center justify-center">
+        <section class="relative w-full h-[30vh] min-h-[200px] flex items-center justify-center">
             <div class="relative w-full h-full" role="region" aria-roledescription="carousel">
                 <div class="carousel">
                     <div class="carousel-inner" id="mainCarousel">
                         <div class="carousel-item">
-                            <div class="relative w-full h-full"><img alt="Educación de Calidad a tu Alcance" class="object-cover w-full h-full" src="https://placehold.co/1920x1080.png" />
+                            <div class="relative w-full h-full"><img alt="Educación de Calidad a tu Alcance" class="object-cover w-full h-full" src="images/wall1.png" />
                                 <div class="absolute inset-0 bg-black/50"></div>
                                 <div class="absolute inset-0 flex items-center justify-center">
-                                    <div class="container px-4 md:px-6 text-center text-white space-y-6">
-                                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold font-headline tracking-tight">Educación de Calidad a tu Alcance</h1>
-                                        <p class="max-w-3xl mx-auto text-lg md:text-xl lg:text-2xl font-body">Mi objetivo es brindarte una educación de calidad con pasión y dedicación, fomentando el pensamiento crítico y la resolución de problemas.</p><a class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-11 rounded-md px-8 bg-primary text-primary-foreground hover:bg-primary/90" href="#clases">Explorar Clases</a>
+                                    <div class="container px-4 md:px-6 text-center text-white space-y-4">
+                                        <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold font-headline tracking-tight">Educación de Calidad a tu Alcance</h1>
+                                        <p class="max-w-2xl mx-auto text-sm md:text-base lg:text-lg font-body">Mi objetivo es brindarte una educación de calidad con pasión y dedicación, fomentando el pensamiento crítico y la resolución de problemas.</p><a class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-9 rounded-md px-6 bg-primary text-primary-foreground hover:bg-primary/90" href="#clases">Explorar Clases</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="carousel-item">
-                            <div class="relative w-full h-full"><img alt="Inspirando a la Próxima Generación" class="object-cover w-full h-full" src="https://placehold.co/1920x1080.png" />
+                            <div class="relative w-full h-full"><img alt="Inspirando a la Próxima Generación" class="object-cover w-full h-full" src="images/wall2.jpg" />
                                 <div class="absolute inset-0 bg-black/50"></div>
                                 <div class="absolute inset-0 flex items-center justify-center">
-                                    <div class="container px-4 md:px-6 text-center text-white space-y-6">
-                                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold font-headline tracking-tight">Inspirando a la Próxima Generación</h1>
-                                        <p class="max-w-3xl mx-auto text-lg md:text-xl lg:text-2xl font-body">Con más de 25 años de experiencia, mi misión es inspirar a la próxima generación de ingenieros y científicos a través del aprendizaje práctico.</p><a class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-11 rounded-md px-8 bg-primary text-primary-foreground hover:bg-primary/90" href="#sobre-mi">Sobre Mí</a>
+                                    <div class="container px-4 md:px-6 text-center text-white space-y-4">
+                                        <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold font-headline tracking-tight">Inspirando a la Próxima Generación</h1>
+                                        <p class="max-w-2xl mx-auto text-sm md:text-base lg:text-lg font-body">Con más de 25 años de experiencia, mi misión es inspirar a la próxima generación de ingenieros y científicos a través del aprendizaje práctico.</p><a class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-9 rounded-md px-6 bg-primary text-primary-foreground hover:bg-primary/90" href="#sobre-mi">Sobre Mí</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="carousel-item">
-                            <div class="relative w-full h-full"><img alt="Recursos y Asesorías Personalizadas" class="object-cover w-full h-full" src="https://placehold.co/1920x1080.png" />
+                            <div class="relative w-full h-full"><img alt="Recursos y Asesorías Personalizadas" class="object-cover w-full h-full" src="images/wall3.webp" />
                                 <div class="absolute inset-0 bg-black/50"></div>
                                 <div class="absolute inset-0 flex items-center justify-center">
-                                    <div class="container px-4 md:px-6 text-center text-white space-y-6">
-                                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold font-headline tracking-tight">Recursos y Asesorías Personalizadas</h1>
-                                        <p class="max-w-3xl mx-auto text-lg md:text-xl lg:text-2xl font-body">Encuentra aquí todos los recursos para mis clases. Si tienes alguna pregunta o necesitas asesoría, no dudes en ponerte en contacto.</p><a class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-11 rounded-md px-8 bg-primary text-primary-foreground hover:bg-primary/90" href="#contacto">Contáctame</a>
+                                    <div class="container px-4 md:px-6 text-center text-white space-y-4">
+                                        <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold font-headline tracking-tight">Recursos y notas de clase</h1>
+                                        <p class="max-w-2xl mx-auto text-sm md:text-base lg:text-lg font-body">Encuentra aquí todos los recursos para mis clases. Acá podrás encontrar apuntes de tus compañeros para compllementar tus propios apuntes.</p><a class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-9 rounded-md px-6 bg-primary text-primary-foreground hover:bg-primary/90" href="#contacto">Contáctame</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="carousel-item">
-                            <div class="relative w-full h-full"><img alt="Innovación en el Aula" class="object-cover w-full h-full" src="https://placehold.co/1920x1080.png" />
+                            <div class="relative w-full h-full"><img alt="Innovación en el Aula" class="object-cover w-full h-full" src="images/wall4.jpg" />
                                 <div class="absolute inset-0 bg-black/50"></div>
                                 <div class="absolute inset-0 flex items-center justify-center">
-                                    <div class="container px-4 md:px-6 text-center text-white space-y-6">
-                                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold font-headline tracking-tight">Innovación en el Aula</h1>
-                                        <p class="max-w-3xl mx-auto text-lg md:text-xl lg:text-2xl font-body">Aplicando las últimas tecnologías y metodologías para una experiencia de aprendizaje única y efectiva.</p><a class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-11 rounded-md px-8 bg-primary text-primary-foreground hover:bg-primary/90" href="#clases">Ver Cursos</a>
+                                    <div class="container px-4 md:px-6 text-center text-white space-y-4">
+                                        <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold font-headline tracking-tight">Innovación en el Aula</h1>
+                                        <p class="max-w-2xl mx-auto text-sm md:text-base lg:text-lg font-body">Aplicando las últimas tecnologías y metodologías para una experiencia de aprendizaje única y efectiva.</p><a class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-9 rounded-md px-6 bg-primary text-primary-foreground hover:bg-primary/90" href="#clases">Ver Cursos</a>
                                     </div>
                                 </div>
                             </div>
@@ -231,10 +302,11 @@
                                 <div class="carousel-item">
                                     <div class="p-1 h-full"><a class="block h-full" href="/cursos/pedagogia-con-ia/">
                                         <div class="rounded-lg border bg-card text-card-foreground shadow-sm h-full flex flex-col transition-all duration-300 hover:shadow-xl hover:scale-105">
-                                            <div class="flex flex-col space-y-1.5 p-0"><img alt="Pedagogía con IA" class="rounded-t-lg object-cover w-full aspect-[3/2]" src="https://placehold.co/600x400.png" /></div>
+                                            <div class="flex flex-col space-y-1.5 p-0"><img alt="Pedagogía con IA" class="rounded-t-lg object-cover w-full aspect-[3/2]" src="images/pada.png" /></div>
                                             <div class="flex-grow flex flex-col text-center p-6 space-y-2">
                                                 <div class="font-semibold tracking-tight font-headline text-2xl">Pedagogía con IA</div>
-                                                <div class="text-sm text-muted-foreground font-body flex-grow">Aprende a integrar la Inteligencia Artificial en procesos educativos y de enseñanza.</div>
+                                                <div class="text-sm text-muted-foreground font-body flex-grow">Aprende a integrar la Inteligencia Artificial en procesos de enseñanza y aprendizaje.<br><br>
+                                                ¡Aproveha el poder de la IA en el aula!</div>
                                             </div>
                                         </div>
                                     </a></div>
@@ -251,7 +323,7 @@
         </section>
         <section id="sobre-mi" class="w-full py-12 md:py-24 lg:py-32">
             <div class="container px-4 md:px-6">
-             <div class="grid items-center gap-10 lg:grid-cols-2 lg:gap-16"><img alt="Profesor Narvá en su oficina" class="mx-auto w-[500px] h-[500px] overflow-hidden rounded-xl object-cover" src="images/narvac.png" />
+                <div class="grid items-center gap-10 lg:grid-cols-2 lg:gap-16"><img alt="Profesor Narvá en su oficina" class="mx-auto w-[500px] h-[500px] overflow-hidden rounded-xl object-cover" src="images/narvac.png" />
                     <div class="space-y-4">
                         <div class="inline-block rounded-lg bg-muted px-3 py-1 text-sm font-medium">SOBRE MÍ</div>
                         <h2 class="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-headline">Un Apasionado por la Enseñanza</h2>
@@ -301,31 +373,29 @@
         </section>
     </main>
     <footer class="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
-        <p class="text-xs text-muted-foreground">© 2025 Clases con Narvá. Todos los derechos reservados.</p>
-        <nav class="sm:ml-auto flex gap-4 sm:gap-6"><a class="text-xs hover:underline underline-offset-4" href="#">Política de Privacidad</a><a class="text-xs hover:underline underline-offset-4" href="#">Términos de Servicio</a></nav>
+        <p class="text-xs text-muted-foreground" style="color: #f4a261;">© 2025 Clases con Narvá. Todos los derechos reservados.</p>
+        <nav class="sm:ml-auto flex gap-4 sm:gap-6"><a class="text-xs hover:underline underline-offset-4" href="#" style="color: #f4a261;">Política de Privacidad</a><a class="text-xs hover:underline underline-offset-4" href="#" style="color: #f4a261;">Términos de Servicio</a></nav>
     </footer>
 </div>
 <script>
-    let currentSlide = {mainCarousel: 0, classesCarousel: 0};
+    let currentSlide = { mainCarousel: 0, classesCarousel: 0 };
 
     function changeSlide(direction, carouselId) {
         const carousel = document.getElementById(carouselId);
         const items = carousel.getElementsByClassName('carousel-item');
-        let itemWidth = items[0].offsetWidth + (parseInt(window.getComputedStyle(items[0]).marginRight) || 0);
-        let visibleItems = window.innerWidth > 768 ? Math.floor(100 / parseFloat(items[0].style.flex.match(/\d+\.?\d*/))) : 1;
+        let itemWidth = items[0].offsetWidth;
+        const totalItems = items.length;
 
-        currentSlide[carouselId] += direction;
-        const maxSlide = items.length - visibleItems;
-        if (currentSlide[carouselId] > maxSlide) currentSlide[carouselId] = maxSlide;
-        if (currentSlide[carouselId] < 0) currentSlide[carouselId] = 0;
+        currentSlide[carouselId] = (currentSlide[carouselId] + direction + totalItems) % totalItems;
 
         carousel.style.transform = `translateX(-${currentSlide[carouselId] * itemWidth}px)`;
-        console.log(`Carousel: ${carouselId}, Slide: ${currentSlide[carouselId]}, ItemWidth: ${itemWidth}, VisibleItems: ${visibleItems}`);
     }
 
-    //<div class="grid items-center gap-10 lg:grid-cols-2 lg:gap-16"><img alt="Profesor Narvá en su oficina" class="mx-auto aspect-[3/4] overflow-hidden rounded-xl object-cover sm:w-full" src="images/narvac.png" />
-    // Auto-slide para el carrusel principal (opcional)
+    // Auto-slide para el carrusel principal
     setInterval(() => changeSlide(1, 'mainCarousel'), 5000);
+
+    // Auto-slide para el carrusel de clases
+    setInterval(() => changeSlide(1, 'classesCarousel'), 5000);
 
     // Ajustar el carrusel al redimensionar la ventana
     window.addEventListener('resize', () => {
@@ -334,6 +404,58 @@
         currentSlide.classesCarousel = 0;
         carousel.style.transform = `translateX(0)`;
     });
+
+    // Funcionalidad del menú de paleta
+    const paletteButton = document.getElementById('paletteButton');
+    const paletteMenu = document.getElementById('paletteMenu');
+    const pageBody = document.getElementById('pageBody');
+
+    paletteButton.addEventListener('click', () => {
+        paletteMenu.classList.toggle('active');
+    });
+
+    document.querySelectorAll('.color-option').forEach(option => {
+        option.addEventListener('click', () => {
+            const backgroundColor = option.getAttribute('data-color');
+            pageBody.style.backgroundColor = backgroundColor;
+
+            // Ajustar colores de texto de forma armónica
+            const luminance = calculateLuminance(backgroundColor);
+            const textColor = luminance > 0.5 ? '#000000' : '#ffffff';
+            document.body.style.color = textColor;
+
+            // Ajustar colores de enlaces y botones
+            const links = document.getElementsByTagName('a');
+            const buttons = document.getElementsByTagName('button');
+            for (let link of links) {
+                link.style.color = textColor;
+            }
+            for (let button of buttons) {
+                button.style.color = textColor;
+            }
+
+            // Ajustar texto dentro de carruseles y secciones
+            const headings = document.getElementsByTagName('h1');
+            const paragraphs = document.getElementsByTagName('p');
+            for (let heading of headings) {
+                heading.style.color = textColor;
+            }
+            for (let paragraph of paragraphs) {
+                paragraph.style.color = textColor;
+            }
+
+            paletteMenu.classList.remove('active'); // Ocultar el menú después de seleccionar
+        });
+    });
+
+    function calculateLuminance(color) {
+        const hex = color.replace('#', '');
+        const r = parseInt(hex.substr(0, 2), 16) / 255;
+        const g = parseInt(hex.substr(2, 2), 16) / 255;
+        const b = parseInt(hex.substr(4, 2), 16) / 255;
+        const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+        return luminance;
+    }
 </script>
 </body>
 
