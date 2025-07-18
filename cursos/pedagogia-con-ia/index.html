@@ -112,6 +112,12 @@
             min-height: 500px;
             height: auto;
         }
+        .content-area video {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
         .content-area img {
             max-width: 100%;
             height: auto;
@@ -190,7 +196,18 @@
             contentUrl = 'Introduccion_a_Pedagogia_IA.html';
         }
 
-        if (contentUrl) {
+        if (clase === 'clase1') {
+            try {
+                const response = await fetch('./videos/InvitacionIA.mp4');
+                if (response.ok) {
+                    contentArea.innerHTML = '<video controls><source src="./videos/InvitacionIA.mp4" type="video/mp4">Tu navegador no soporta el elemento de video.</video>';
+                } else {
+                    contentArea.innerHTML = '<img src="./images/narvia1.png" alt="Narvá Placeholder" />';
+                }
+            } catch (error) {
+                contentArea.innerHTML = '<img src="./images/narvia1.png" alt="Narvá Placeholder" />';
+            }
+        } else if (contentUrl) {
             try {
                 const response = await fetch(contentUrl);
                 if (response.ok) {
