@@ -112,6 +112,12 @@
             min-height: 500px;
             height: auto;
         }
+        .content-area img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
         @media (max-width: 768px) {
             .sidebar {
                 width: 100%;
@@ -173,27 +179,41 @@
     </div>
 </div>
 <script>
-    function loadContent(clase) {
+    async function loadContent(clase) {
         const contentArea = document.getElementById('contentArea');
         const links = document.querySelectorAll('.sidebar a');
         links.forEach(link => link.classList.remove('active'));
         document.querySelector(`.sidebar a[onclick="loadContent('${clase}')"]`)?.classList.add('active');
 
+        let contentUrl = '';
         if (clase === 'clase1') {
-            contentArea.innerHTML = '<iframe src="Introduccion_a_Pedagogia_IA.html" id="contentFrame"></iframe>';
-            setTimeout(() => {
-                const iframe = document.getElementById('contentFrame');
-                if (iframe) {
-                    iframe.onload = function() {
-                        const doc = iframe.contentDocument || iframe.contentWindow.document;
-                        const body = doc.body;
-                        const height = body.scrollHeight;
-                        iframe.style.height = height + 'px';
-                    };
+            contentUrl = 'Introduccion_a_Pedagogia_IA.html';
+        }
+
+        if (contentUrl) {
+            try {
+                const response = await fetch(contentUrl);
+                if (response.ok) {
+                    contentArea.innerHTML = `<iframe src="${contentUrl}" id="contentFrame"></iframe>`;
+                    setTimeout(() => {
+                        const iframe = document.getElementById('contentFrame');
+                        if (iframe) {
+                            iframe.onload = function() {
+                                const doc = iframe.contentDocument || iframe.contentWindow.document;
+                                const body = doc.body;
+                                const height = body.scrollHeight;
+                                iframe.style.height = height + 'px';
+                            };
+                        }
+                    }, 100);
+                } else {
+                    contentArea.innerHTML = '<img src="./images/narvia1.png" alt="Narvá Placeholder" />';
                 }
-            }, 100);
+            } catch (error) {
+                contentArea.innerHTML = '<img src="./images/narvia1.png" alt="Narvá Placeholder" />';
+            }
         } else {
-            contentArea.innerHTML = `<p>El contenido para ${clase.replace('clase', 'Clase ')} aún no está disponible. Selecciona otra clase o regresa pronto.</p>`;
+            contentArea.innerHTML = '<img src="./images/narvia1.png" alt="Narvá Placeholder" />';
         }
     }
 
