@@ -20,14 +20,14 @@
         }
         .sidebar {
             width: 16rem;
-            background-color: #2c3e50;
+            background-color: var(--sidebar-bg, #2c3e50);
             color: #ecf0f1;
             height: 100vh;
             position: fixed;
             top: 0;
             left: 0;
             padding-top: 20px;
-            transition: width 0.3s;
+            transition: width 0.3s, background-color 0.3s;
         }
         .sidebar ul {
             list-style: none;
@@ -43,7 +43,38 @@
         }
         .sidebar ul li a:hover,
         .sidebar ul li a.active {
-            background-color: #34495e;
+            background-color: var(--sidebar-hover, #34495e);
+        }
+        .home-icon {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            color: #ecf0f1;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .home-icon:hover {
+            background-color: var(--sidebar-hover, #34495e);
+        }
+        .home-icon svg {
+            margin-right: 10px;
+        }
+        .color-palette {
+            padding: 10px 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .color-option {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border-color 0.3s;
+        }
+        .color-option:hover,
+        .color-option.selected {
+            border-color: #fff;
         }
         .main-content {
             margin-left: 16rem;
@@ -60,7 +91,7 @@
         .course-header h1 {
             font-family: 'Playfair Display', serif;
             font-size: 2.5rem;
-            color: #2c3e50;
+            color: var(--primary-color, #2c3e50);
             margin: 0;
         }
         .course-header p {
@@ -78,8 +109,8 @@
         .content-area iframe {
             width: 100%;
             border: none;
-            min-height: 500px; /* Altura mínima inicial */
-            height: auto; /* Permitir ajuste dinámico */
+            min-height: 500px;
+            height: auto;
         }
         @media (max-width: 768px) {
             .sidebar {
@@ -96,6 +127,21 @@
 <body class="font-body antialiased">
 <div style="--sidebar-width:16rem;--sidebar-width-icon:3rem" class="flex min-h-svh w-full">
     <div class="sidebar">
+        <a href="/" class="home-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            Volver al Inicio
+        </a>
+        <div class="color-palette">
+            <div class="color-option" style="background-color: #2c3e50" data-color="#2c3e50" data-hover="#34495e"></div>
+            <div class="color-option" style="background-color: #1a3c34" data-color="#1a3c34" data-hover="#2e5a50"></div>
+            <div class="color-option" style="background-color: #4a235a" data-color="#4a235a" data-hover="#6a3b7d"></div>
+            <div class="color-option" style="background-color: #7f2c2c" data-color="#7f2c2c" data-hover="#9b3f3f"></div>
+            <div class="color-option" style="background-color: #ff6f61" data-color="#ff6f61" data-hover="#ff8a80"></div>
+            <div class="color-option" style="background-color: #1e88e5" data-color="#1e88e5" data-hover="#42a5f5"></div>
+        </div>
         <ul>
             <li><a href="#" class="active" onclick="loadContent('clase1')">Clase 1</a></li>
             <li><a href="#" onclick="loadContent('clase2')">Clase 2</a></li>
@@ -131,11 +177,10 @@
         const contentArea = document.getElementById('contentArea');
         const links = document.querySelectorAll('.sidebar a');
         links.forEach(link => link.classList.remove('active'));
-        document.querySelector(`.sidebar a[onclick="loadContent('${clase}')"]`).classList.add('active');
+        document.querySelector(`.sidebar a[onclick="loadContent('${clase}')"]`)?.classList.add('active');
 
         if (clase === 'clase1') {
             contentArea.innerHTML = '<iframe src="Operaciones con Arrays Estáticos en C++.html" id="contentFrame"></iframe>';
-            // Ajustar el tamaño del iframe al contenido
             setTimeout(() => {
                 const iframe = document.getElementById('contentFrame');
                 if (iframe) {
@@ -152,8 +197,32 @@
         }
     }
 
-    // Cargar Clase 1 por defecto al iniciar
+    function setTheme(color, hover) {
+        document.documentElement.style.setProperty('--sidebar-bg', color);
+        document.documentElement.style.setProperty('--sidebar-hover', hover);
+        document.documentElement.style.setProperty('--primary-color', color);
+        localStorage.setItem('themeColor', color);
+        localStorage.setItem('themeHover', hover);
+        document.querySelectorAll('.color-option').forEach(option => {
+            option.classList.remove('selected');
+            if (option.getAttribute('data-color') === color) {
+                option.classList.add('selected');
+            }
+        });
+    }
+
+    document.querySelectorAll('.color-option').forEach(option => {
+        option.addEventListener('click', () => {
+            const color = option.getAttribute('data-color');
+            const hover = option.getAttribute('data-hover');
+            setTheme(color, hover);
+        });
+    });
+
     window.onload = function() {
+        const savedColor = localStorage.getItem('themeColor') || '#2c3e50';
+        const savedHover = localStorage.getItem('themeHover') || '#34495e';
+        setTheme(savedColor, savedHover);
         loadContent('clase1');
     };
 </script>
