@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumen Clase 1: Memorias - Lenguajes y Paradigmas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1e3a8a, #60a5fa);
+            color: #1f2937;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            background: linear-gradient(to right, #2563eb, #1e40af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        h2 {
+            color: #1e40af;
+            border-bottom: 2px solid #60a5fa;
+            padding-bottom: 0.5rem;
+        }
+        .quote {
+            background: #eff6ff;
+            border-left: 4px solid #2563eb;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-style: italic;
+        }
+        .card {
+            background: #ffffff;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card .image-container {
+            width: 100%;
+            padding-top: 75%; /* Proporción 4:3 para mantener la relación de aspecto */
+            position: relative;
+            overflow: hidden;
+        }
+        .card .image-container img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Cambiado de cover a contain para evitar cortes */
+            border-bottom: 2px solid #60a5fa;
+        }
+        .card-content {
+            padding: 1.5rem;
+        }
+        .card-title {
+            color: #1e40af;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        .image-caption {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+        .header-image {
+            width: 100%;
+            height: auto;
+            max-height: 300px;
+            object-fit: contain;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .code-block {
+            background: #1f2937;
+            color: #f3f4f6;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+<div class="container mx-auto my-8 p-6">
+    <img src="images/colossus.jpg" alt="Colossus Computer" class="header-image">
+    <p class="image-caption">Colossus, una de las primeras computadoras electrónicas (1943). Fuente: Wikimedia Commons, Public Domain.</p>
+    <h1 class="text-4xl font-bold text-center mb-6">Clase 1: Memorias - Lenguajes y Paradigmas de Computación</h1>
+
+    <section class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4">Introducción</h2>
+        <p class="text-lg mb-4">Bienvenidos al curso de Lenguajes y Paradigmas de Computación, impartido en la Universidad EAFIT por:</p>
+        <ul class="list-disc list-inside mb-4">
+            <li><strong>Docente</strong>: Alexander Narváez Berrío, Msc. en Ingeniería</li>
+            <li><strong>Correo</strong>: <a href="mailto:anarvae1@eafit.edu.co" class="text-blue-600 hover:underline">anarvae1@eafit.edu.co</a></li>
+        </ul>
+        <div class="quote mb-6">
+            <p>"Una carrera en ciencias de la computación es un compromiso con una vida de aprendizaje. No se enseñarán todos los detalles que necesitarás en tu carrera mientras seas estudiante. El objetivo es darte las herramientas para aprender nuevos lenguajes, frameworks y arquitecturas." <em>(p. v)</em></p>
+        </div>
+        <p class="text-lg">Este curso te prepara para adaptarte a tecnologías emergentes de manera autónoma, explorando los fundamentos de la programación y su evolución.</p>
+    </section>
+
+    <section class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4">Pioneros de la Computación</h2>
+        <p class="text-lg mb-4">La informática moderna se construyó sobre las contribuciones de visionarios que desarrollaron conceptos y máquinas fundamentales:</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="card">
+                <div class="image-container"><img src="images/pascal.jpg" alt="Blaise Pascal"></div>
+                <div class="card-content">
+                    <h3 class="card-title">Blaise Pascal (1623–1662)</h3>
+                    <p>Inventó la Pascalina, una calculadora mecánica que automatizó operaciones aritméticas, un precursor de las computadoras.</p>
+                    <p class="image-caption">Blaise Pascal, retrato del siglo XVII. Fuente: Wikimedia Commons, Public Domain.</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="image-container"><img src="images/leibniz.jpg" alt="Gottfried Leibniz"></div>
+                <div class="card-content">
+                    <h3 class="card-title">Gottfried Leibniz (1646–1716)</h3>
+                    <p>Desarrolló una máquina de calcular que realizaba multiplicaciones y divisiones, y sentó las bases del sistema binario.</p>
+                    <p class="image-caption">Gottfried Leibniz, circa 1700. Fuente: Wikimedia Commons, Public Domain.</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="image-container"><img src="images/jacquard.jpg" alt="Joseph Marie Jacquard"></div>
+                <div class="card-content">
+                    <h3 class="card-title">Joseph Marie Jacquard (1752–1834)</h3>
+                    <p>Inventó el telar de Jacquard, que usaba tarjetas perforadas para programar patrones, un precursor de la programación.</p>
+                    <p class="image-caption">Joseph Marie Jacquard, retrato. Fuente: Wikimedia Commons, Public Domain.</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="image-container"><img src="images/hilbert.jpg" alt="David Hilbert"></div>
+                <div class="card-content">
+                    <h3 class="card-title">David Hilbert (1862–1943)</h3>
+                    <p>Sus problemas matemáticos impulsaron investigaciones en computabilidad, influyendo en la informática teórica.</p>
+                    <p class="image-caption">David Hilbert, 1912. Fuente: Wikimedia Commons, Public Domain.</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="image-container"><img src="images/godel.jpg" alt="Kurt Gödel"></div>
+                <div class="card-content">
+                    <h3 class="card-title">Kurt Gödel (1906–1978)</h3>
+                    <p>Sus teoremas de incompletitud demostraron límites en sistemas formales, impactando la teoría de la computación.</p>
+                    <p class="image-caption">Kurt Gödel, retrato. Fuente: Wikimedia Commons, Public Domain.</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="image-container"><img src="images/church.jpg" alt="Alonzo Church"></div>
+                <div class="card-content">
+                    <h3 class="card-title">Alonzo Church (1903–1995)</h3>
+                    <p>Desarrolló el cálculo lambda, un fundamento clave para la programación funcional.</p>
+                    <p class="image-caption">Alonzo Church, retrato. Fuente: Wikimedia Commons, Public Domain.</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="image-container"><img src="images/turing.jpg" alt="Alan Turing"></div>
+                <div class="card-content">
+                    <h3 class="card-title">Alan Turing (1912–1954)</h3>
+                    <p>Creador de la máquina de Turing, que formalizó los conceptos de algoritmo y computación.</p>
+                    <p class="image-caption">Alan Turing, retrato. Fuente: Wikimedia Commons, Public Domain.</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="image-container"><img src="images/von_neumann.jpg" alt="John von Neumann"></div>
+                <div class="card-content">
+                    <h3 class="card-title">John von Neumann (1903–1957)</h3>
+                    <p>Propuso la arquitectura von Neumann, base de las computadoras modernas.</p>
+                    <p class="image-caption">John von Neumann, Los Alamos. Fuente: Wikimedia Commons, Public Domain.</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="image-container"><img src="images/zuse.jpg" alt="Konrad Zuse"></div>
+                <div class="card-content">
+                    <h3 class="card-title">Konrad Zuse (1910–1995)</h3>
+                    <p>Construyó la Z3 (1941), una de las primeras computadoras programables funcionales.</p>
+                    <p class="image-caption">Konrad Zuse, 1994. Fuente: Wikimedia Commons, Public Domain.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4">Orígenes de Lenguajes de Programación</h2>
+        <p class="text-lg mb-4">Los lenguajes de programación han evolucionado para abordar necesidades específicas:</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="card">
+                <div class="image-container"><img src="images/c_logo.png" alt="C Logo"></div>
+                <div class="card-content">
+                    <h3 class="card-title">C</h3>
+                    <p>Desarrollado en los 70 para sistemas operativos como UNIX, su eficiencia lo hace fundamental en software embebido y sistemas.</p>
+                    <p class="image-caption">Logotipo de C. Fuente: Wikimedia Commons, Public Domain.</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="image-container"><img src="images/cpp_logo.png" alt="C++ Logo"></div>
+                <div class="card-content">
+                    <h3 class="card-title">C++</h3>
+                    <p>Extiende C con programación orientada a objetos, usado en aplicaciones de alto rendimiento como juegos y motores gráficos.</p>
+                    <p class="image-caption">Logotipo de C++. Fuente: Wikimedia Commons, Public Domain.</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="image-container"><img src="images/java_logo.png" alt="Java Logo"></div>
+                <div class="card-content">
+                    <h3 class="card-title">Java</h3>
+                    <p>Creado en 1991, su máquina virtual asegura portabilidad, siendo clave en aplicaciones empresariales y Android.</p>
+                    <p class="image-caption">Logotipo de Java. Fuente: Wikimedia Commons, Public Domain.</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="image-container"><img src="images/python_logo.png" alt="Python Logo"></div>
+                <div class="card-content">
+                    <h3 class="card-title">Python</h3>
+                    <p>Creado por Guido van Rossum (1994–2008), su simplicidad lo hace ideal para ciencia de datos, IA y desarrollo web.</p>
+                    <p class="image-caption">Logotipo de Python. Fuente: Wikimedia Commons, Public Domain.</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="image-container"><img src="images/prolog_logo.png" alt="Prolog Logo"></div>
+                <div class="card-content">
+                    <h3 class="card-title">Prolog</h3>
+                    <p>Desarrollado en 1972 por Alain Colmerauer, usado en inteligencia artificial y procesamiento del lenguaje natural.</p>
+                    <p class="image-caption">Logotipo de Prolog. Fuente: Wikimedia Commons, Public Domain.</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="image-container"><img src="images/ml_logo.png" alt="ML Logo"></div>
+                <div class="card-content">
+                    <h3 class="card-title">ML Estándar</h3>
+                    <p>Creado por Robin Milner (1986), es un metalenguaje influyente en lenguajes funcionales como Haskell.</p>
+                    <p class="image-caption">Logotipo de Standard ML. Fuente: Wikimedia Commons, Public Domain.</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="image-container"><img src="images/javascript_logo.png" alt="JavaScript Logo"></div>
+                <div class="card-content">
+                    <h3 class="card-title">JavaScript</h3>
+                    <p>Creado por Brendan Eich (1995), es esencial para aplicaciones web interactivas y frameworks como React.</p>
+                    <p class="image-caption">Logotipo de JavaScript. Fuente: Wikimedia Commons, Public Domain.</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="image-container"><img src="images/rust_logo.png" alt="Rust Logo"></div>
+                <div class="card-content">
+                    <h3 class="card-title">Rust</h3>
+                    <p>Desarrollado por Mozilla y lanzado en 2010, Rust destaca por su enfoque en seguridad de memoria y concurrencia sin sacrificar rendimiento. Es ideal para sistemas operativos, aplicaciones web y proyectos que requieren alta confiabilidad.</p>
+                    <p class="image-caption">Logotipo de Rust. Fuente: Wikimedia Commons, Public Domain.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4">Modelos de Computación</h2>
+        <p class="text-lg mb-4">Exploramos dos paradigmas principales con ejemplos:</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="card">
+                <div class="image-container"><img src="images/imperative_paradigm.png" alt="Imperative Paradigm"></div>
+                <div class="card-content">
+                    <h3 class="card-title">Modelo Imperativo</h3>
+                    <p>Basado en instrucciones secuenciales y registros de activación. Ejemplo en C:</p>
+                    <pre class="code-block">
+int main() {
+    int sum = 0;
+    for (int i = 0; i < 5; i++) {
+        sum += i;
+    }
+    return sum;
+}
+                        </pre>
+                    <p class="image-caption">Diagrama del paradigma imperativo. Fuente: Wikimedia Commons, Public Domain.</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="image-container"><img src="images/functional_paradigm.png" alt="Functional Paradigm"></div>
+                <div class="card-content">
+                    <h3 class="card-title">Modelo Funcional</h3>
+                    <p>Usa funciones puras y datos inmutables. Ejemplo en Haskell:</p>
+                    <pre class="code-block">
+sumList = foldl (+) 0 [0..4]
+                        </pre>
+                    <p>Características:
+                    <ul class="list-disc list-inside">
+                        <li>Datos inmutables.</li>
+                        <li>Funciones como ciudadanos de primera clase.</li>
+                        <li>Sin distinción entre programa y datos.</li>
+                        <li>Énfasis en la pila.</li>
+                    </ul>
+                    </p>
+                    <p class="image-caption">Diagrama del paradigma funcional. Fuente: Wikimedia Commons, Public Domain.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4">Compiladores vs. Intérpretes</h2>
+        <p class="text-lg mb-4">Diferencias en la ejecución de programas:</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="card">
+                <div class="image-container"><img src="images/compilation_process.png" alt="Compilation Process"></div>
+                <div class="card-content">
+                    <h3 class="card-title">Lenguajes Compilados</h3>
+                    <p>Proceso de tres pasos:
+                    <ol class="list-decimal list-inside">
+                        <li>Escribir el programa fuente.</li>
+                        <li>Compilar a un ejecutable (vía AST y ensamblador).</li>
+                        <li>Ejecutar el programa.</li>
+                    </ol>
+                    Ejemplo: C, C++.
+                    </p>
+                    <p class="image-caption">Proceso de compilación. Fuente: Wikimedia Commons, Public Domain.</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="image-container"><img src="images/interpreter_process.png" alt="Interpreter Process"></div>
+                <div class="card-content">
+                    <h3 class="card-title">Lenguajes Interpretados</h3>
+                    <p>Proceso de dos pasos:
+                    <ol class="list-decimal list-inside">
+                        <li>Escribir el programa fuente.</li>
+                        <li>Ejecutar mediante un intérprete (AST a bytecode).</li>
+                    </ol>
+                    Ejemplo: Python, JavaScript.
+                    </p>
+                    <p class="image-caption">Proceso de interpretación. Fuente: Wikimedia Commons, Public Domain.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4">Lenguajes Populares (2025)</h2>
+        <p class="text-lg mb-4">Según el índice TIOBE de julio 2025, los lenguajes más populares reflejan la importancia del desarrollo web, IA y sistemas:</p>
+        <ul class="list-disc list-inside mb-4">
+            <li><strong>Python</strong>: Mantiene el liderazgo por su versatilidad en IA, ciencia de datos y desarrollo web, gracias a su sintaxis sencilla y gran comunidad.</li>
+            <li><strong>C++</strong>: Muy usado en desarrollo de juegos y sistemas, destacado por su rendimiento y soporte para programación orientada a objetos.</li>
+            <li><strong>C</strong>: Fundamental en sistemas operativos y software embebido, valorado por su eficiencia.</li>
+            <li><strong>Java</strong>: Dominante en aplicaciones empresariales y Android, aunque ha perdido terreno frente a C++.</li>
+            <li><strong>Ada</strong>: Entró al top 10 por su uso en sistemas críticos, como aplicaciones militares y aeroespaciales.</li>
+        </ul>
+        <p class="text-lg">Consulta el ranking completo en: <a href="https://www.tiobe.com/tiobe-index/" class="text-blue-600 hover:underline">TIOBE Index</a>.</p>
+    </section>
+</div>
+</body>
+</html>
