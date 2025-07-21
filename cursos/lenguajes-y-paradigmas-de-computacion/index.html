@@ -112,6 +112,17 @@
             min-height: 500px;
             height: auto;
         }
+        .submenu {
+            display: none;
+            padding-left: 20px;
+        }
+        .submenu.active {
+            display: block;
+        }
+        .submenu a {
+            font-size: 14px;
+            padding: 8px 20px;
+        }
         @media (max-width: 768px) {
             .sidebar {
                 width: 100%;
@@ -143,23 +154,125 @@
             <div class="color-option" style="background-color: #1e88e5" data-color="#1e88e5" data-hover="#42a5f5"></div>
         </div>
         <ul>
-            <li><a href="#" class="active" onclick="loadContent('clase1')">Clase 1</a></li>
-            <li><a href="#" onclick="loadContent('clase2')">Clase 2</a></li>
-            <li><a href="#" onclick="loadContent('clase3')">Clase 3</a></li>
-            <li><a href="#" onclick="loadContent('clase4')">Clase 4</a></li>
-            <li><a href="#" onclick="loadContent('clase5')">Clase 5</a></li>
-            <li><a href="#" onclick="loadContent('clase6')">Clase 6</a></li>
-            <li><a href="#" onclick="loadContent('clase7')">Clase 7</a></li>
-            <li><a href="#" onclick="loadContent('clase8')">Clase 8</a></li>
-            <li><a href="#" onclick="loadContent('clase9')">Clase 9</a></li>
-            <li><a href="#" onclick="loadContent('clase10')">Clase 10</a></li>
-            <li><a href="#" onclick="loadContent('clase11')">Clase 11</a></li>
-            <li><a href="#" onclick="loadContent('clase12')">Clase 12</a></li>
-            <li><a href="#" onclick="loadContent('clase13')">Clase 13</a></li>
-            <li><a href="#" onclick="loadContent('clase14')">Clase 14</a></li>
-            <li><a href="#" onclick="loadContent('clase15')">Clase 15</a></li>
-            <li><a href="#" onclick="loadContent('clase16')">Clase 16</a></li>
-            <li><a href="#" onclick="loadContent('clase17')">Clase 17</a></li>
+            <li>
+                <a href="#" onclick="toggleSubmenu('clase1')">Clase 1</a>
+                <div class="submenu" id="submenu-clase1">
+                    <a href="#" onclick="loadContent('clase1', 'memorias')">Memorias Profe</a>
+                    <a href="#" onclick="loadContent('clase1', 'notas')">Notas Estudiantes</a>
+                </div>
+            </li>
+            <li>
+                <a href="#" onclick="toggleSubmenu('clase2')">Clase 2</a>
+                <div class="submenu" id="submenu-clase2">
+                    <a href="#" onclick="loadContent('clase2', 'memorias')">Memorias Profe</a>
+                    <a href="#" onclick="loadContent('clase2', 'notas')">Notas Estudiantes</a>
+                </div>
+            </li>
+            <li>
+                <a href="#" onclick="toggleSubmenu('clase3')">Clase 3</a>
+                <div class="submenu" id="submenu-clase3">
+                    <a href="#" onclick="loadContent('clase3', 'memorias')">Memorias Profe</a>
+                    <a href="#" onclick="loadContent('clase3', 'notas')">Notas Estudiantes</a>
+                </div>
+            </li>
+            <li>
+                <a href="#" onclick="toggleSubmenu('clase4')">Clase 4</a>
+                <div class="submenu" id="submenu-clase4">
+                    <a href="#" onclick="loadContent('clase4', 'memorias')">Memorias Profe</a>
+                    <a href="#" onclick="loadContent('clase4', 'notas')">Notas Estudiantes</a>
+                </div>
+            </li>
+            <li>
+                <a href="#" onclick="toggleSubmenu('clase5')">Clase 5</a>
+                <div class="submenu" id="submenu-clase5">
+                    <a href="#" onclick="loadContent('clase5', 'memorias')">Memorias Profe</a>
+                    <a href="#" onclick="loadContent('clase5', 'notas')">Notas Estudiantes</a>
+                </div>
+            </li>
+            <li>
+                <a href="#" onclick="toggleSubmenu('clase6')">Clase 6</a>
+                <div class="submenu" id="submenu-clase6">
+                    <a href="#" onclick="loadContent('clase6', 'memorias')">Memorias Profe</a>
+                    <a href="#" onclick="loadContent('clase6', 'notas')">Notas Estudiantes</a>
+                </div>
+            </li>
+            <li>
+                <a href="#" onclick="toggleSubmenu('clase7')">Clase 7</a>
+                <div class="submenu" id="submenu-clase7">
+                    <a href="#" onclick="loadContent('clase7', 'memorias')">Memorias Profe</a>
+                    <a href="#" onclick="loadContent('clase7', 'notas')">Notas Estudiantes</a>
+                </div>
+            </li>
+            <li>
+                <a href="#" onclick="toggleSubmenu('clase8')">Clase 8</a>
+                <div class="submenu" id="submenu-clase8">
+                    <a href="#" onclick="loadContent('clase8', 'memorias')">Memorias Profe</a>
+                    <a href="#" onclick="loadContent('clase8', 'notas')">Notas Estudiantes</a>
+                </div>
+            </li>
+            <li>
+                <a href="#" onclick="toggleSubmenu('clase9')">Clase 9</a>
+                <div class="submenu" id="submenu-clase9">
+                    <a href="#" onclick="loadContent('clase9', 'memorias')">Memorias Profe</a>
+                    <a href="#" onclick="loadContent('clase9', 'notas')">Notas Estudiantes</a>
+                </div>
+            </li>
+            <li>
+                <a href="#" onclick="toggleSubmenu('clase10')">Clase 10</a>
+                <div class="submenu" id="submenu-clase10">
+                    <a href="#" onclick="loadContent('clase10', 'memorias')">Memorias Profe</a>
+                    <a href="#" onclick="loadContent('clase10', 'notas')">Notas Estudiantes</a>
+                </div>
+            </li>
+            <li>
+                <a href="#" onclick="toggleSubmenu('clase11')">Clase 11</a>
+                <div class="submenu" id="submenu-clase11">
+                    <a href="#" onclick="loadContent('clase11', 'memorias')">Memorias Profe</a>
+                    <a href="#" onclick="loadContent('clase11', 'notas')">Notas Estudiantes</a>
+                    contentsline
+            </li>
+            <li>
+                <a href="#" onclick="toggleSubmenu('clase12')">Clase 12</a>
+                <div class="submenu" id="submenu-clase12">
+                    <a href="#" onclick="loadContent('clase12', 'memorias')">Memorias Profe</a>
+                    <a href="#" onclick="loadContent('clase12', 'notas')">Notas Estudiantes</a>
+                </div>
+            </li>
+            <li>
+                <a href="#" onclick="toggleSubmenu('clase13')">Clase 13</a>
+                <div class="submenu" id="submenu-clase13">
+                    <a href="#" onclick="loadContent('clase13', 'memorias')">Memorias Profe</a>
+                    <a href="#" onclick="loadContent('clase13', 'notas')">Notas Estudiantes</a>
+                </div>
+            </li>
+            <li>
+                <a href="#" onclick="toggleSubmenu('clase14')">Clase 14</a>
+                <div class="submenu" id="submenu-clase14">
+                    <a href="#" onclick="loadContent('clase14', 'memorias')">Memorias Profe</a>
+                    <a href="#" onclick="loadContent('clase14', 'notas')">Notas Estudiantes</a>
+                </div>
+            </li>
+            <li>
+                <a href="#" onclick="toggleSubmenu('clase15')">Clase 15</a>
+                <div class="submenu" id="submenu-clase15">
+                    <a href="#" onclick="loadContent('clase15', 'memorias')">Memorias Profe</a>
+                    <a href="#" onclick="loadContent('clase15', 'notas')">Notas Estudiantes</a>
+                </div>
+            </li>
+            <li>
+                <a href="#" onclick="toggleSubmenu('clase16')">Clase 16</a>
+                <div class="submenu" id="submenu-clase16">
+                    <a href="#" onclick="loadContent('clase16', 'memorias')">Memorias Profe</a>
+                    <a href="#" onclick="loadContent('clase16', 'notas')">Notas Estudiantes</a>
+                </div>
+            </li>
+            <li>
+                <a href="#" onclick="toggleSubmenu('clase17')">Clase 17</a>
+                <div class="submenu" id="submenu-clase17">
+                    <a href="#" onclick="loadContent('clase17', 'memorias')">Memorias Profe</a>
+                    <a href="#" onclick="loadContent('clase17', 'notas')">Notas Estudiantes</a>
+                </div>
+            </li>
         </ul>
     </div>
     <div class="main-content">
@@ -173,14 +286,34 @@
     </div>
 </div>
 <script>
-    function loadContent(clase) {
+    function toggleSubmenu(clase) {
+        const submenu = document.getElementById(`submenu-${clase}`);
+        const isActive = submenu.classList.contains('active');
+        document.querySelectorAll('.submenu').forEach(sub => sub.classList.remove('active'));
+        document.querySelectorAll('.sidebar a').forEach(link => link.classList.remove('active'));
+        if (!isActive) {
+            submenu.classList.add('active');
+            document.querySelector(`.sidebar a[onclick="toggleSubmenu('${clase}')"]`).classList.add('active');
+        }
+    }
+
+    function loadContent(clase, type) {
         const contentArea = document.getElementById('contentArea');
         const links = document.querySelectorAll('.sidebar a');
         links.forEach(link => link.classList.remove('active'));
-        document.querySelector(`.sidebar a[onclick="loadContent('${clase}')"]`)?.classList.add('active');
+        document.querySelector(`.sidebar a[onclick="loadContent('${clase}', '${type}')"]`)?.classList.add('active');
 
-        if (clase === 'clase1') {
-            contentArea.innerHTML = '<iframe src="Introduccion_a_Paradigmas.html" id="contentFrame"></iframe>';
+        let src = '';
+        if (clase === 'clase1' && type === 'memorias') {
+            src = 'Introduccion_a_Paradigmas.html';
+        } else if (clase === 'clase2' && type === 'memorias') {
+            src = 'clase2.html';
+        } else if (type === 'notas') {
+            src = `notas_${clase}.html`;
+        }
+
+        if (src) {
+            contentArea.innerHTML = `<iframe src="${src}" id="contentFrame"></iframe>`;
             setTimeout(() => {
                 const iframe = document.getElementById('contentFrame');
                 if (iframe) {
@@ -193,7 +326,7 @@
                 }
             }, 100);
         } else {
-            contentArea.innerHTML = `<p>El contenido para ${clase.replace('clase', 'Clase ')} aún no está disponible. Selecciona otra clase o regresa pronto.</p>`;
+            contentArea.innerHTML = `<p>El contenido para ${clase.replace('clase', 'Clase ')} (${type === 'memorias' ? 'Memorias Profe' : 'Notas Estudiantes'}) aún no está disponible. Selecciona otra clase o regresa pronto.</p>`;
         }
     }
 
@@ -223,7 +356,7 @@
         const savedColor = localStorage.getItem('themeColor') || '#2c3e50';
         const savedHover = localStorage.getItem('themeHover') || '#34495e';
         setTheme(savedColor, savedHover);
-        loadContent('clase1');
+        loadContent('clase1', 'memorias');
     };
 </script>
 </body>
