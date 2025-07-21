@@ -27,7 +27,11 @@
             top: 0;
             left: 0;
             padding-top: 20px;
-            transition: width 0.3s, background-color 0.3s;
+            transition: transform 0.3s ease-in-out;
+            z-index: 1000;
+        }
+        .sidebar.hidden {
+            transform: translateX(-16rem);
         }
         .sidebar ul {
             list-style: none;
@@ -80,6 +84,10 @@
             margin-left: 16rem;
             padding: 20px;
             min-height: calc(100vh - 60px);
+            transition: margin-left 0.3s ease-in-out;
+        }
+        .main-content.full-screen {
+            margin-left: 0;
         }
         .course-header {
             background-color: #fff;
@@ -123,21 +131,73 @@
             font-size: 14px;
             padding: 8px 20px;
         }
+        .toggle-sidebar {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            color: #ecf0f1;
+            text-decoration: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .toggle-sidebar:hover {
+            background-color: var(--sidebar-hover, #34495e);
+        }
+        .toggle-sidebar svg {
+            margin-right: 10px;
+        }
+        .floating-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: var(--sidebar-bg, #2c3e50);
+            color: #ecf0f1;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: none;
+            z-index: 1001;
+        }
+        .floating-toggle:hover {
+            background-color: var(--sidebar-hover, #34495e);
+        }
+        .floating-toggle.active {
+            display: block;
+        }
         @media (max-width: 768px) {
             .sidebar {
                 width: 100%;
                 height: auto;
                 position: relative;
+                transform: none;
+            }
+            .sidebar.hidden {
+                display: none;
             }
             .main-content {
                 margin-left: 0;
+            }
+            .main-content.full-screen {
+                margin-left: 0;
+            }
+            .floating-toggle {
+                top: 10px;
+                left: 10px;
             }
         }
     </style>
 </head>
 <body class="font-body antialiased">
 <div style="--sidebar-width:16rem;--sidebar-width-icon:3rem" class="flex min-h-svh w-full">
-    <div class="sidebar">
+    <div class="sidebar" id="sidebar">
+        <div class="toggle-sidebar" onclick="toggleSidebar()">
+            <svg width="24", height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 18h18"></path>
+                <path d="M3 6h18"></path>
+                <path d="M3 12h18"></path>
+            </svg>
+            Ocultar/Mostrar Menú
+        </div>
         <a href="/" class="home-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"></path>
@@ -229,7 +289,7 @@
                 <div class="submenu" id="submenu-clase11">
                     <a href="#" onclick="loadContent('clase11', 'memorias')">Memorias Profe</a>
                     <a href="#" onclick="loadContent('clase11', 'notas')">Notas Estudiantes</a>
-                    contentsline
+                </div>
             </li>
             <li>
                 <a href="#" onclick="toggleSubmenu('clase12')">Clase 12</a>
@@ -275,7 +335,14 @@
             </li>
         </ul>
     </div>
-    <div class="main-content">
+    <div class="floating-toggle" id="floatingToggle" onclick="toggleSidebar()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 18h18"></path>
+            <path d="M3 6h18"></path>
+            <path d="M3 12h18"></path>
+        </svg>
+    </div>
+    <div class="main-content" id="mainContent">
         <div class="course-header">
             <h1>Lenguajes y Paradigmas de Computación</h1>
             <p>Bienvenido al curso de Lenguajes y Paradigmas de Computación. Explora los fundamentos de diferentes paradigmas de programación.</p>
@@ -308,8 +375,10 @@
             src = 'Introduccion_a_Paradigmas.html';
         } else if (clase === 'clase2' && type === 'memorias') {
             src = 'clase2.html';
-        } else if (type === 'notas') {
-            src = `notas_${clase}.html`;
+        } else if (clase === 'clase2' && type === 'notas') {
+            src = 'notasclase2.html';
+        } else {
+            src = `${type}_${clase}.html`;
         }
 
         if (src) {
@@ -342,6 +411,15 @@
                 option.classList.add('selected');
             }
         });
+    }
+
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        const floatingToggle = document.getElementById('floatingToggle');
+        sidebar.classList.toggle('hidden');
+        mainContent.classList.toggle('full-screen');
+        floatingToggle.classList.toggle('active');
     }
 
     document.querySelectorAll('.color-option').forEach(option => {
