@@ -53,6 +53,9 @@
             position: relative;
             overflow: hidden;
         }
+        .language-card .image-container {
+            padding-top: 12.5%; /* Reduce la altura de las cards de lenguajes a la mitad de la anterior (12.5% de 25%) */
+        }
         .card .image-container img {
             position: absolute;
             top: 0;
@@ -61,6 +64,13 @@
             height: 100%;
             object-fit: contain; /* Cambiado de cover a contain para evitar cortes */
             border-bottom: 2px solid #60a5fa;
+        }
+        .card .language-logo img {
+            transform: scale(0.5); /* Aumenta el tamaño de los logos a la mitad de su tamaño original */
+            transform-origin: center; /* Centra la transformación */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* Centra la imagen dentro del contenedor */
         }
         .card-content {
             padding: 1.5rem;
@@ -197,64 +207,64 @@
         <h2 class="text-2xl font-semibold mb-4">Orígenes de Lenguajes de Programación</h2>
         <p class="text-lg mb-4">Los lenguajes de programación han evolucionado para abordar necesidades específicas:</p>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="card">
-                <div class="image-container"><img src="images/c_logo.png" alt="C Logo"></div>
+            <div class="language-card card">
+                <div class="image-container language-logo"><img src="images/c_logo.png" alt="C Logo"></div>
                 <div class="card-content">
                     <h3 class="card-title">C</h3>
                     <p>Desarrollado en los 70 para sistemas operativos como UNIX, su eficiencia lo hace fundamental en software embebido y sistemas.</p>
                     <p class="image-caption">Logotipo de C. Fuente: Wikimedia Commons, Public Domain.</p>
                 </div>
             </div>
-            <div class="card">
-                <div class="image-container"><img src="images/cpp_logo.png" alt="C++ Logo"></div>
+            <div class="language-card card">
+                <div class="image-container language-logo"><img src="images/cpp_logo.png" alt="C++ Logo"></div>
                 <div class="card-content">
                     <h3 class="card-title">C++</h3>
                     <p>Extiende C con programación orientada a objetos, usado en aplicaciones de alto rendimiento como juegos y motores gráficos.</p>
                     <p class="image-caption">Logotipo de C++. Fuente: Wikimedia Commons, Public Domain.</p>
                 </div>
             </div>
-            <div class="card">
-                <div class="image-container"><img src="images/java_logo.png" alt="Java Logo"></div>
+            <div class="language-card card">
+                <div class="image-container language-logo"><img src="images/java_logo.png" alt="Java Logo"></div>
                 <div class="card-content">
                     <h3 class="card-title">Java</h3>
                     <p>Creado en 1991, su máquina virtual asegura portabilidad, siendo clave en aplicaciones empresariales y Android.</p>
                     <p class="image-caption">Logotipo de Java. Fuente: Wikimedia Commons, Public Domain.</p>
                 </div>
             </div>
-            <div class="card">
-                <div class="image-container"><img src="images/python_logo.png" alt="Python Logo"></div>
+            <div class="language-card card">
+                <div class="image-container language-logo"><img src="images/python_logo.png" alt="Python Logo"></div>
                 <div class="card-content">
                     <h3 class="card-title">Python</h3>
                     <p>Creado por Guido van Rossum (1994–2008), su simplicidad lo hace ideal para ciencia de datos, IA y desarrollo web.</p>
                     <p class="image-caption">Logotipo de Python. Fuente: Wikimedia Commons, Public Domain.</p>
                 </div>
             </div>
-            <div class="card">
-                <div class="image-container"><img src="images/prolog_logo.png" alt="Prolog Logo"></div>
+            <div class="language-card card">
+                <div class="image-container language-logo"><img src="images/prolog_logo.png" alt="Prolog Logo"></div>
                 <div class="card-content">
                     <h3 class="card-title">Prolog</h3>
                     <p>Desarrollado en 1972 por Alain Colmerauer, usado en inteligencia artificial y procesamiento del lenguaje natural.</p>
                     <p class="image-caption">Logotipo de Prolog. Fuente: Wikimedia Commons, Public Domain.</p>
                 </div>
             </div>
-            <div class="card">
-                <div class="image-container"><img src="images/ml_logo.png" alt="ML Logo"></div>
+            <div class="language-card card">
+                <div class="image-container language-logo"><img src="images/ml_logo.png" alt="ML Logo"></div>
                 <div class="card-content">
                     <h3 class="card-title">ML Estándar</h3>
                     <p>Creado por Robin Milner (1986), es un metalenguaje influyente en lenguajes funcionales como Haskell.</p>
                     <p class="image-caption">Logotipo de Standard ML. Fuente: Wikimedia Commons, Public Domain.</p>
                 </div>
             </div>
-            <div class="card">
-                <div class="image-container"><img src="images/javascript_logo.png" alt="JavaScript Logo"></div>
+            <div class="language-card card">
+                <div class="image-container language-logo"><img src="images/javascript_logo.png" alt="JavaScript Logo"></div>
                 <div class="card-content">
                     <h3 class="card-title">JavaScript</h3>
                     <p>Creado por Brendan Eich (1995), es esencial para aplicaciones web interactivas y frameworks como React.</p>
                     <p class="image-caption">Logotipo de JavaScript. Fuente: Wikimedia Commons, Public Domain.</p>
                 </div>
             </div>
-            <div class="card">
-                <div class="image-container"><img src="images/rust_logo.png" alt="Rust Logo"></div>
+            <div class="language-card card">
+                <div class="image-container language-logo"><img src="images/rust_logo.png" alt="Rust Logo"></div>
                 <div class="card-content">
                     <h3 class="card-title">Rust</h3>
                     <p>Desarrollado por Mozilla y lanzado en 2010, Rust destaca por su enfoque en seguridad de memoria y concurrencia sin sacrificar rendimiento. Es ideal para sistemas operativos, aplicaciones web y proyectos que requieren alta confiabilidad.</p>
