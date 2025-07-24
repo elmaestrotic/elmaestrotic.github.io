@@ -192,6 +192,19 @@
                     };
                 }
             }, 100);
+        } else if (clase === 'clase2') {
+            contentArea.innerHTML = '<iframe src="clase2.html" id="contentFrame"></iframe>';
+            setTimeout(() => {
+                const iframe = document.getElementById('contentFrame');
+                if (iframe) {
+                    iframe.onload = function() {
+                        const doc = iframe.contentDocument || iframe.contentWindow.document;
+                        const body = doc.body;
+                        const height = body.scrollHeight;
+                        iframe.style.height = height + 'px';
+                    };
+                }
+            }, 100);
         } else {
             contentArea.innerHTML = `<p>El contenido para ${clase.replace('clase', 'Clase ')} aún no está disponible. Selecciona otra clase o regresa pronto.</p>`;
         }
