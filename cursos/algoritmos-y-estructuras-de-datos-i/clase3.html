@@ -1,0 +1,1886 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estructuras de Datos - Listas enlazadas y Colas por Alexander Narváez</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: white;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 20px;
+        }
+
+        .author {
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1em;
+        }
+
+        .topic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        .topic-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .topic-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.6s;
+        }
+
+        .topic-card:hover::before {
+            left: 100%;
+        }
+
+        .topic-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .topic-card h2 {
+            color: #4a5568;
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2em;
+        }
+
+        .topic-icon {
+            width: 60px;
+            height: 60px;
+        }
+
+        .topic-description {
+            color: #666;
+            font-size: 0.9em;
+            line-height: 1.4;
+            margin-top: 10px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 2% auto;
+            padding: 0;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+
+        .modal-header .topic-icon {
+            width: 50px;
+            height: 50px;
+        }
+
+        .modal-body {
+            padding: 30px;
+            color: #333;
+        }
+
+        .close {
+            color: white;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .close:hover {
+            opacity: 1;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .code-example {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 25px;
+            border-radius: 12px;
+            font-family: 'Fira Code', 'Cascadia Code', 'JetBrains Mono', 'Source Code Pro', 'Consolas', monospace;
+            margin: 20px 0;
+            overflow-x: auto;
+            border-left: 4px solid #4299e1;
+            font-size: 14px;
+            line-height: 1.6;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            white-space: pre;
+            text-align: left;
+            tab-size: 4;
+            -moz-tab-size: 4;
+            -o-tab-size: 4;
+        }
+
+        .code-example .keyword {
+            color: #c792ea;
+            font-weight: bold;
+        }
+
+        .code-example .string {
+            color: #c3e88d;
+        }
+
+        .code-example .comment {
+            color: #546e7a;
+            font-style: italic;
+        }
+
+        .code-example .type {
+            color: #82aaff;
+        }
+
+        .code-example .function {
+            color: #ffcb6b;
+        }
+
+        .code-example .number {
+            color: #f78c6c;
+        }
+
+        .code-example .operator {
+            color: #89ddff;
+        }
+
+        .code-example .preprocessor {
+            color: #c792ea;
+        }
+
+        .advantages {
+            background: #f0fff4;
+            border: 1px solid #68d391;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .disadvantages {
+            background: #fff5f5;
+            border: 1px solid #fc8181;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .complexity-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .complexity-table th,
+        .complexity-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .complexity-table th {
+            background: #4a5568;
+            color: white;
+            font-weight: 600;
+        }
+
+        .complexity-table tr:hover {
+            background: #f7fafc;
+        }
+
+        .visual-section {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .visual-section h3 {
+            color: #4a5568;
+            margin-bottom: 20px;
+        }
+
+        .animation-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            color: white;
+        }
+
+        .reference-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .reference-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .reference-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #a8e6cf 0%, #88d8a3 100%);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .topic-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+        }
+
+        /* Animaciones */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .node {
+            fill: #4299e1;
+            stroke: #2b6cb0;
+            stroke-width: 2;
+            transition: all 0.3s ease;
+        }
+
+        .node:hover {
+            fill: #3182ce;
+        }
+
+        .link-line {
+            stroke: #2b6cb0;
+            stroke-width: 2;
+            marker-end: url(#arrowhead);
+        }
+
+        .node-text {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            fill: white;
+            text-anchor: middle;
+            dominant-baseline: middle;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header fade-in">
+            <h1>🔗 Estructuras de Datos</h1>
+            <p>Listas Enlazadas y Colas</p>
+            <div class="author">Por Alexander Narváez</div>
+        </header>
+
+        <div class="topic-grid">
+            <!-- Card 1: Introducción a Estructuras de Datos -->
+            <div class="topic-card fade-in" onclick="openModal('intro-modal')">
+                <h2>
+                    <svg class="topic-icon" viewBox="0 0 100 100">
+                        <rect x="10" y="20" width="80" height="60" rx="10" fill="#4299e1" stroke="#2b6cb0" stroke-width="2"/>
+                        <rect x="20" y="30" width="15" height="15" fill="white"/>
+                        <rect x="40" y="30" width="15" height="15" fill="white"/>
+                        <rect x="60" y="30" width="15" height="15" fill="white"/>
+                        <rect x="20" y="50" width="15" height="15" fill="white"/>
+                        <rect x="40" y="50" width="15" height="15" fill="white"/>
+                        <rect x="60" y="50" width="15" height="15" fill="white"/>
+                    </svg>
+                    Introducción a Estructuras de Datos
+                </h2>
+                <div class="topic-description">
+                    Fundamentos y conceptos básicos de organización de datos
+                </div>
+            </div>
+
+            <!-- Card 2: Listas Enlazadas -->
+            <div class="topic-card fade-in" onclick="openModal('linked-lists-modal')">
+                <h2>
+                    <svg class="topic-icon" viewBox="0 0 100 100">
+                        <circle cx="20" cy="50" r="12" fill="#4299e1" stroke="#2b6cb0" stroke-width="2"/>
+                        <circle cx="50" cy="50" r="12" fill="#4299e1" stroke="#2b6cb0" stroke-width="2"/>
+                        <circle cx="80" cy="50" r="12" fill="#4299e1" stroke="#2b6cb0" stroke-width="2"/>
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#2b6cb0"/>
+                            </marker>
+                        </defs>
+                        <line x1="32" y1="50" x2="38" y2="50" class="link-line"/>
+                        <line x1="62" y1="50" x2="68" y2="50" class="link-line"/>
+                        <text x="20" y="55" class="node-text">A</text>
+                        <text x="50" y="55" class="node-text">B</text>
+                        <text x="80" y="55" class="node-text">C</text>
+                    </svg>
+                    Listas Enlazadas
+                </h2>
+                <div class="topic-description">
+                    Estructuras dinámicas con enlaces entre elementos
+                </div>
+            </div>
+
+            <!-- Card 3: Colas (Queues) -->
+            <div class="topic-card fade-in" onclick="openModal('queues-modal')">
+                <h2>
+                    <svg class="topic-icon" viewBox="0 0 100 100">
+                        <rect x="10" y="35" width="80" height="30" rx="5" fill="none" stroke="#4299e1" stroke-width="2"/>
+                        <rect x="15" y="40" width="15" height="20" fill="#4299e1"/>
+                        <rect x="35" y="40" width="15" height="20" fill="#4299e1"/>
+                        <rect x="55" y="40" width="15" height="20" fill="#4299e1"/>
+                        <text x="22" y="53" class="node-text" style="font-size: 12px;">1</text>
+                        <text x="42" y="53" class="node-text" style="font-size: 12px;">2</text>
+                        <text x="62" y="53" class="node-text" style="font-size: 12px;">3</text>
+                        <text x="50" y="25" style="font-size: 10px; text-anchor: middle; fill: #4299e1;">FIFO</text>
+                        <path d="M5,50 L10,50" stroke="#4299e1" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <path d="90,50 L95,50" stroke="#4299e1" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <text x="2" y="75" style="font-size: 8px; fill: #4299e1;">IN</text>
+                        <text x="92" y="75" style="font-size: 8px; fill: #4299e1;">OUT</text>
+                    </svg>
+                    Colas (Queues)
+                </h2>
+                <div class="topic-description">
+                    Estructuras FIFO para procesamiento ordenado
+                </div>
+            </div>
+
+            <!-- Card 4: Comparación y Casos de Uso -->
+            <div class="topic-card fade-in" onclick="openModal('comparison-modal')">
+                <h2>
+                    <svg class="topic-icon" viewBox="0 0 100 100">
+                        <circle cx="30" cy="30" r="20" fill="#4299e1" opacity="0.7"/>
+                        <circle cx="70" cy="30" r="20" fill="#764ba2" opacity="0.7"/>
+                        <circle cx="50" cy="70" r="20" fill="#667eea" opacity="0.7"/>
+                        <text x="30" y="35" class="node-text" style="font-size: 10px;">Lista</text>
+                        <text x="70" y="35" class="node-text" style="font-size: 10px;">Cola</text>
+                        <text x="50" y="75" class="node-text" style="font-size: 10px;">Uso</text>
+                    </svg>
+                    Comparación y Casos de Uso
+                </h2>
+                <div class="topic-description">
+                    Análisis comparativo y aplicaciones prácticas
+                </div>
+            </div>
+
+            <!-- Card 5: Implementaciones Avanzadas -->
+            <div class="topic-card fade-in" onclick="openModal('advanced-modal')">
+                <h2>
+                    <svg class="topic-icon" viewBox="0 0 100 100">
+                        <polygon points="50,10 90,30 70,70 30,70 10,30" fill="#4299e1" opacity="0.8"/>
+                        <circle cx="50" cy="40" r="15" fill="white"/>
+                        <text x="50" y="45" class="node-text" style="font-size: 12px; fill: #4299e1;">ADV</text>
+                    </svg>
+                    Implementaciones Avanzadas
+                </h2>
+                <div class="topic-description">
+                    Técnicas optimizadas y estructuras especializadas
+                </div>
+            </div>
+
+            <!-- Card 6: Ejercicios y Problemas -->
+            <div class="topic-card fade-in" onclick="openModal('exercises-modal')">
+                <h2>
+                    <svg class="topic-icon" viewBox="0 0 100 100">
+                        <rect x="20" y="20" width="60" height="60" rx="10" fill="#4299e1" opacity="0.3"/>
+                        <path d="M30,35 L40,45 L60,25" stroke="#4299e1" stroke-width="3" fill="none"/>
+                        <circle cx="35" cy="55" r="3" fill="#4299e1"/>
+                        <circle cx="45" cy="55" r="3" fill="#4299e1"/>
+                        <circle cx="55" cy="55" r="3" fill="#4299e1"/>
+                        <circle cx="35" cy="65" r="3" fill="#4299e1"/>
+                        <circle cx="45" cy="65" r="3" fill="#4299e1"/>
+                        <circle cx="55" cy="65" r="3" fill="#4299e1"/>
+                    </svg>
+                    Ejercicios Prácticos
+                </h2>
+                <div class="topic-description">
+                    Problemas y desafíos para practicar
+                </div>
+            </div>
+        </div>
+
+        <!-- Modales para cada tema -->
+        
+        <!-- Modal 1: Introducción -->
+        <div id="intro-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <svg class="topic-icon" viewBox="0 0 100 100">
+                        <rect x="10" y="20" width="80" height="60" rx="10" fill="white" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+                        <rect x="20" y="30" width="15" height="15" fill="rgba(255,255,255,0.8)"/>
+                        <rect x="40" y="30" width="15" height="15" fill="rgba(255,255,255,0.8)"/>
+                        <rect x="60" y="30" width="15" height="15" fill="rgba(255,255,255,0.8)"/>
+                        <rect x="20" y="50" width="15" height="15" fill="rgba(255,255,255,0.8)"/>
+                        <rect x="40" y="50" width="15" height="15" fill="rgba(255,255,255,0.8)"/>
+                        <rect x="60" y="50" width="15" height="15" fill="rgba(255,255,255,0.8)"/>
+                    </svg>
+                    <h2>Introducción a Estructuras de Datos</h2>
+                    <span class="close" onclick="closeModal('intro-modal')">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <p>Las <span class="highlight">estructuras de datos</span> son formas específicas de organizar y almacenar datos en una computadora para que puedan ser utilizados de manera eficiente.</p>
+                    
+                    <h4>🎯 Objetivos principales:</h4>
+                    <ul>
+                        <li>Optimizar el uso de memoria</li>
+                        <li>Facilitar el acceso y manipulación de datos</li>
+                        <li>Mejorar la eficiencia de algoritmos</li>
+                        <li>Resolver problemas computacionales específicos</li>
+                    </ul>
+
+                    <div class="advantages">
+                        <strong>💡 Importancia:</strong>
+                        <p>La elección correcta de una estructura de datos puede reducir significativamente la complejidad temporal y espacial de un algoritmo.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal 2: Listas Enlazadas -->
+        <div id="linked-lists-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <svg class="topic-icon" viewBox="0 0 100 100">
+                        <circle cx="20" cy="50" r="12" fill="white" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
+                        <circle cx="50" cy="50" r="12" fill="white" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
+                        <circle cx="80" cy="50" r="12" fill="white" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
+                        <defs>
+                            <marker id="arrowhead-white" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="white"/>
+                            </marker>
+                        </defs>
+                        <line x1="32" y1="50" x2="38" y2="50" stroke="white" stroke-width="2" marker-end="url(#arrowhead-white)"/>
+                        <line x1="62" y1="50" x2="68" y2="50" stroke="white" stroke-width="2" marker-end="url(#arrowhead-white)"/>
+                        <text x="20" y="55" style="font-family: 'Courier New', monospace; font-size: 12px; fill: #4299e1; text-anchor: middle; dominant-baseline: middle;">A</text>
+                        <text x="50" y="55" style="font-family: 'Courier New', monospace; font-size: 12px; fill: #4299e1; text-anchor: middle; dominant-baseline: middle;">B</text>
+                        <text x="80" y="55" style="font-family: 'Courier New', monospace; font-size: 12px; fill: #4299e1; text-anchor: middle; dominant-baseline: middle;">C</text>
+                    </svg>
+                    <h2>Listas Enlazadas</h2>
+                    <span class="close" onclick="closeModal('linked-lists-modal')">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <p>Una <span class="highlight">lista enlazada</span> es una estructura de datos lineal donde los elementos (nodos) se almacenan en secuencia, pero no necesariamente en ubicaciones contiguas de memoria.</p>
+
+                    <h4>🏗️ Componentes de un nodo:</h4>
+                    <ul>
+                        <li><strong>Dato:</strong> La información almacenada</li>
+                        <li><strong>Puntero/Referencia:</strong> Dirección del siguiente nodo</li>
+                    </ul>
+
+                    <div class="code-example"><span class="preprocessor">#include</span> <span class="string">&lt;iostream&gt;</span>
+<span class="keyword">using namespace</span> <span class="type">std</span>;
+
+<span class="keyword">struct</span> <span class="type">Nodo</span> {
+    <span class="type">int</span> dato;
+    <span class="type">Nodo</span><span class="operator">*</span> siguiente;
+    
+    <span class="comment">// Constructor del nodo</span>
+    <span class="function">Nodo</span>(<span class="type">int</span> valor) : dato(valor), siguiente(<span class="keyword">nullptr</span>) {}
+};
+
+<span class="keyword">class</span> <span class="type">ListaEnlazada</span> {
+<span class="keyword">private</span>:
+    <span class="type">Nodo</span><span class="operator">*</span> cabeza;
+    
+<span class="keyword">public</span>:
+    <span class="comment">// Constructor de la lista</span>
+    <span class="function">ListaEnlazada</span>() : cabeza(<span class="keyword">nullptr</span>) {}
+    
+    <span class="comment">// Insertar al inicio de la lista - O(1)</span>
+    <span class="type">void</span> <span class="function">insertarAlInicio</span>(<span class="type">int</span> dato) {
+        <span class="type">Nodo</span><span class="operator">*</span> nuevoNodo <span class="operator">=</span> <span class="keyword">new</span> <span class="type">Nodo</span>(dato);
+        nuevoNodo<span class="operator">-&gt;</span>siguiente <span class="operator">=</span> cabeza;
+        cabeza <span class="operator">=</span> nuevoNodo;
+    }
+    
+    <span class="comment">// Insertar al final de la lista - O(n)</span>
+    <span class="type">void</span> <span class="function">insertarAlFinal</span>(<span class="type">int</span> dato) {
+        <span class="type">Nodo</span><span class="operator">*</span> nuevoNodo <span class="operator">=</span> <span class="keyword">new</span> <span class="type">Nodo</span>(dato);
+        <span class="keyword">if</span> (cabeza <span class="operator">==</span> <span class="keyword">nullptr</span>) {
+            cabeza <span class="operator">=</span> nuevoNodo;
+            <span class="keyword">return</span>;
+        }
+        <span class="type">Nodo</span><span class="operator">*</span> actual <span class="operator">=</span> cabeza;
+        <span class="keyword">while</span> (actual<span class="operator">-&gt;</span>siguiente <span class="operator">!=</span> <span class="keyword">nullptr</span>) {
+            actual <span class="operator">=</span> actual<span class="operator">-&gt;</span>siguiente;
+        }
+        actual<span class="operator">-&gt;</span>siguiente <span class="operator">=</span> nuevoNodo;
+    }
+    
+    <span class="comment">// Eliminar un nodo con valor específico - O(n)</span>
+    <span class="type">bool</span> <span class="function">eliminar</span>(<span class="type">int</span> dato) {
+        <span class="keyword">if</span> (cabeza <span class="operator">==</span> <span class="keyword">nullptr</span>) <span class="keyword">return</span> <span class="keyword">false</span>;
+        
+        <span class="comment">// Si el nodo a eliminar es la cabeza</span>
+        <span class="keyword">if</span> (cabeza<span class="operator">-&gt;</span>dato <span class="operator">==</span> dato) {
+            <span class="type">Nodo</span><span class="operator">*</span> temp <span class="operator">=</span> cabeza;
+            cabeza <span class="operator">=</span> cabeza<span class="operator">-&gt;</span>siguiente;
+            <span class="keyword">delete</span> temp;
+            <span class="keyword">return</span> <span class="keyword">true</span>;
+        }
+        
+        <span class="comment">// Buscar el nodo a eliminar</span>
+        <span class="type">Nodo</span><span class="operator">*</span> actual <span class="operator">=</span> cabeza;
+        <span class="keyword">while</span> (actual<span class="operator">-&gt;</span>siguiente <span class="operator">!=</span> <span class="keyword">nullptr</span>) {
+            <span class="keyword">if</span> (actual<span class="operator">-&gt;</span>siguiente<span class="operator">-&gt;</span>dato <span class="operator">==</span> dato) {
+                <span class="type">Nodo</span><span class="operator">*</span> temp <span class="operator">=</span> actual<span class="operator">-&gt;</span>siguiente;
+                actual<span class="operator">-&gt;</span>siguiente <span class="operator">=</span> actual<span class="operator">-&gt;</span>siguiente<span class="operator">-&gt;</span>siguiente;
+                <span class="keyword">delete</span> temp;
+                <span class="keyword">return</span> <span class="keyword">true</span>;
+            }
+            actual <span class="operator">=</span> actual<span class="operator">-&gt;</span>siguiente;
+        }
+        <span class="keyword">return</span> <span class="keyword">false</span>;
+    }
+    
+    <span class="comment">// Mostrar todos los elementos de la lista</span>
+    <span class="type">void</span> <span class="function">mostrar</span>() {
+        <span class="type">Nodo</span><span class="operator">*</span> actual <span class="operator">=</span> cabeza;
+        <span class="keyword">while</span> (actual <span class="operator">!=</span> <span class="keyword">nullptr</span>) {
+            cout <span class="operator">&lt;&lt;</span> actual<span class="operator">-&gt;</span>dato <span class="operator">&lt;&lt;</span> <span class="string">" -&gt; "</span>;
+            actual <span class="operator">=</span> actual<span class="operator">-&gt;</span>siguiente;
+        }
+        cout <span class="operator">&lt;&lt;</span> <span class="string">"NULL"</span> <span class="operator">&lt;&lt;</span> endl;
+    }
+    
+    <span class="comment">// Destructor - libera toda la memoria</span>
+    <span class="operator">~</span><span class="function">ListaEnlazada</span>() {
+        <span class="keyword">while</span> (cabeza <span class="operator">!=</span> <span class="keyword">nullptr</span>) {
+            <span class="type">Nodo</span><span class="operator">*</span> temp <span class="operator">=</span> cabeza;
+            cabeza <span class="operator">=</span> cabeza<span class="operator">-&gt;</span>siguiente;
+            <span class="keyword">delete</span> temp;
+        }
+    }
+};
+                    </div>
+
+                    <h4>🔍 Tipos de Listas Enlazadas:</h4>
+                    <ul>
+                        <li><strong>Simple:</strong> Cada nodo apunta al siguiente</li>
+                        <li><strong>Doble:</strong> Cada nodo tiene punteros al anterior y siguiente</li>
+                        <li><strong>Circular:</strong> El último nodo apunta al primero</li>
+                    </ul>
+
+                    <table class="complexity-table">
+                        <thead>
+                            <tr>
+                                <th>Operación</th>
+                                <th>Complejidad Temporal</th>
+                                <th>Descripción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Inserción al inicio</td>
+                                <td>O(1)</td>
+                                <td>Constante, muy eficiente</td>
+                            </tr>
+                            <tr>
+                                <td>Inserción al final</td>
+                                <td>O(n)</td>
+                                <td>Requiere recorrer toda la lista</td>
+                            </tr>
+                            <tr>
+                                <td>Búsqueda</td>
+                                <td>O(n)</td>
+                                <td>Puede requerir recorrer toda la lista</td>
+                            </tr>
+                            <tr>
+                                <td>Eliminación</td>
+                                <td>O(n)</td>
+                                <td>Primero buscar, luego eliminar</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="advantages">
+                        <strong>✅ Ventajas:</strong>
+                        <ul>
+                            <li>Tamaño dinámico</li>
+                            <li>Inserción/eliminación eficiente al inicio</li>
+                            <li>Uso eficiente de memoria</li>
+                        </ul>
+                    </div>
+
+                    <div class="disadvantages">
+                        <strong>❌ Desventajas:</strong>
+                        <ul>
+                            <li>No acceso aleatorio</li>
+                            <li>Memoria adicional para punteros</li>
+                            <li>No cache-friendly</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal 3: Colas -->
+        <div id="queues-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <svg class="topic-icon" viewBox="0 0 100 100">
+                        <rect x="10" y="35" width="80" height="30" rx="5" fill="none" stroke="white" stroke-width="2"/>
+                        <rect x="15" y="40" width="15" height="20" fill="rgba(255,255,255,0.8)"/>
+                        <rect x="35" y="40" width="15" height="20" fill="rgba(255,255,255,0.8)"/>
+                        <rect x="55" y="40" width="15" height="20" fill="rgba(255,255,255,0.8)"/>
+                        <text x="22" y="53" style="font-family: 'Courier New', monospace; font-size: 10px; fill: #4299e1; text-anchor: middle; dominant-baseline: middle;">1</text>
+                        <text x="42" y="53" style="font-family: 'Courier New', monospace; font-size: 10px; fill: #4299e1; text-anchor: middle; dominant-baseline: middle;">2</text>
+                        <text x="62" y="53" style="font-family: 'Courier New', monospace; font-size: 10px; fill: #4299e1; text-anchor: middle; dominant-baseline: middle;">3</text>
+                        <text x="50" y="25" style="font-size: 8px; text-anchor: middle; fill: white;">FIFO</text>
+                    </svg>
+                    <h2>Colas (Queues)</h2>
+                    <span class="close" onclick="closeModal('queues-modal')">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <p>Una <span class="highlight">cola</span> es una estructura de datos que sigue el principio <strong>FIFO (First In, First Out)</strong>. El primer elemento en entrar es el primero en salir.</p>
+
+                    <h4>🔄 Operaciones principales:</h4>
+                    <ul>
+                        <li><strong>Enqueue:</strong> Agregar un elemento al final</li>
+                        <li><strong>Dequeue:</strong> Remover el elemento del frente</li>
+                        <li><strong>Front/Peek:</strong> Ver el elemento del frente sin removerlo</li>
+                        <li><strong>IsEmpty:</strong> Verificar si la cola está vacía</li>
+                    </ul>
+
+                    <div class="code-example"><span class="preprocessor">#include</span> <span class="string">&lt;iostream&gt;</span>
+<span class="preprocessor">#include</span> <span class="string">&lt;stdexcept&gt;</span>
+<span class="keyword">using namespace</span> <span class="type">std</span>;
+
+<span class="keyword">template</span><span class="operator">&lt;</span><span class="keyword">typename</span> <span class="type">T</span><span class="operator">&gt;</span>
+<span class="keyword">class</span> <span class="type">Cola</span> {
+<span class="keyword">private</span>:
+    <span class="keyword">struct</span> <span class="type">Nodo</span> {
+        <span class="type">T</span> dato;
+        <span class="type">Nodo</span><span class="operator">*</span> siguiente;
+        
+        <span class="comment">// Constructor del nodo</span>
+        <span class="function">Nodo</span>(<span class="type">T</span> valor) : dato(valor), siguiente(<span class="keyword">nullptr</span>) {}
+    };
+    
+    <span class="type">Nodo</span><span class="operator">*</span> frente;    <span class="comment">// Puntero al primer elemento</span>
+    <span class="type">Nodo</span><span class="operator">*</span> final;     <span class="comment">// Puntero al último elemento</span>
+    <span class="type">int</span> tamaño;         <span class="comment">// Número de elementos</span>
+    
+<span class="keyword">public</span>:
+    <span class="comment">// Constructor de la cola</span>
+    <span class="function">Cola</span>() : frente(<span class="keyword">nullptr</span>), final(<span class="keyword">nullptr</span>), tamaño(<span class="number">0</span>) {}
+    
+    <span class="comment">// Agregar elemento al final de la cola - O(1)</span>
+    <span class="type">void</span> <span class="function">enqueue</span>(<span class="type">T</span> item) {
+        <span class="type">Nodo</span><span class="operator">*</span> nuevoNodo <span class="operator">=</span> <span class="keyword">new</span> <span class="type">Nodo</span>(item);
+        
+        <span class="keyword">if</span> (final <span class="operator">==</span> <span class="keyword">nullptr</span>) {
+            <span class="comment">// Cola vacía, nuevo nodo es frente y final</span>
+            frente <span class="operator">=</span> final <span class="operator">=</span> nuevoNodo;
+        } <span class="keyword">else</span> {
+            <span class="comment">// Conectar nuevo nodo al final</span>
+            final<span class="operator">-&gt;</span>siguiente <span class="operator">=</span> nuevoNodo;
+            final <span class="operator">=</span> nuevoNodo;
+        }
+        tamaño<span class="operator">++</span>;
+    }
+    
+    <span class="comment">// Remover y retornar el primer elemento - O(1)</span>
+    <span class="type">T</span> <span class="function">dequeue</span>() {
+        <span class="keyword">if</span> (<span class="function">isEmpty</span>()) {
+            <span class="keyword">throw</span> <span class="type">runtime_error</span>(<span class="string">"Cola vacía"</span>);
+        }
+        
+        <span class="type">T</span> valor <span class="operator">=</span> frente<span class="operator">-&gt;</span>dato;
+        <span class="type">Nodo</span><span class="operator">*</span> temp <span class="operator">=</span> frente;
+        frente <span class="operator">=</span> frente<span class="operator">-&gt;</span>siguiente;
+        
+        <span class="comment">// Si la cola queda vacía, actualizar final</span>
+        <span class="keyword">if</span> (frente <span class="operator">==</span> <span class="keyword">nullptr</span>) {
+            final <span class="operator">=</span> <span class="keyword">nullptr</span>;
+        }
+        
+        <span class="keyword">delete</span> temp;
+        tamaño<span class="operator">--</span>;
+        <span class="keyword">return</span> valor;
+    }
+    
+    <span class="comment">// Ver el primer elemento sin removerlo - O(1)</span>
+    <span class="type">T</span> <span class="function">front</span>() {
+        <span class="keyword">if</span> (<span class="function">isEmpty</span>()) {
+            <span class="keyword">throw</span> <span class="type">runtime_error</span>(<span class="string">"Cola vacía"</span>);
+        }
+        <span class="keyword">return</span> frente<span class="operator">-&gt;</span>dato;
+    }
+    
+    <span class="comment">// Verificar si la cola está vacía - O(1)</span>
+    <span class="type">bool</span> <span class="function">isEmpty</span>() {
+        <span class="keyword">return</span> frente <span class="operator">==</span> <span class="keyword">nullptr</span>;
+    }
+    
+    <span class="comment">// Obtener el tamaño de la cola - O(1)</span>
+    <span class="type">int</span> <span class="function">size</span>() {
+        <span class="keyword">return</span> tamaño;
+    }
+    
+    <span class="comment">// Mostrar todos los elementos de la cola</span>
+    <span class="type">void</span> <span class="function">mostrar</span>() {
+        <span class="type">Nodo</span><span class="operator">*</span> actual <span class="operator">=</span> frente;
+        cout <span class="operator">&lt;&lt;</span> <span class="string">"Frente: "</span>;
+        <span class="keyword">while</span> (actual <span class="operator">!=</span> <span class="keyword">nullptr</span>) {
+            cout <span class="operator">&lt;&lt;</span> actual<span class="operator">-&gt;</span>dato <span class="operator">&lt;&lt;</span> <span class="string">" "</span>;
+            actual <span class="operator">=</span> actual<span class="operator">-&gt;</span>siguiente;
+        }
+        cout <span class="operator">&lt;&lt;</span> <span class="string">":Final"</span> <span class="operator">&lt;&lt;</span> endl;
+    }
+    
+    <span class="comment">// Destructor - libera toda la memoria</span>
+    <span class="operator">~</span><span class="function">Cola</span>() {
+        <span class="keyword">while</span> (!<span class="function">isEmpty</span>()) {
+            <span class="function">dequeue</span>();
+        }
+    }
+};
+
+<span class="comment">// Ejemplo de uso:</span>
+<span class="comment">// Cola&lt;int&gt; miCola;</span>
+<span class="comment">// miCola.enqueue(10);</span>
+<span class="comment">// miCola.enqueue(20);</span>
+<span class="comment">// cout &lt;&lt; miCola.dequeue(); // Imprime: 10</span>
+                    </div>
+
+                    <h4>🎯 Tipos de Colas:</h4>
+                    <ul>
+                        <li><strong>Cola Simple:</strong> FIFO básico</li>
+                        <li><strong>Cola Circular:</strong> El final se conecta con el inicio</li>
+                        <li><strong>Cola de Prioridad:</strong> Elementos con prioridades</li>
+                        <li><strong>Deque:</strong> Inserción/eliminación en ambos extremos</li>
+                    </ul>
+
+                    <h4>📋 Aplicaciones prácticas:</h4>
+                    <div class="advantages">
+                        <ul>
+                            <li><strong>Sistemas operativos:</strong> Cola de procesos</li>
+                            <li><strong>Redes:</strong> Buffer de paquetes</li>
+                            <li><strong>Algoritmos:</strong> BFS (Búsqueda en anchura)</li>
+                            <li><strong>Servicios:</strong> Cola de impresión</li>
+                            <li><strong>Simulaciones:</strong> Modelado de sistemas</li>
+                        </ul>
+                    </div>
+
+                    <table class="complexity-table">
+                        <thead>
+                            <tr>
+                                <th>Operación</th>
+                                <th>Complejidad</th>
+                                <th>Descripción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Enqueue</td>
+                                <td>O(1)</td>
+                                <td>Inserción al final</td>
+                            </tr>
+                            <tr>
+                                <td>Dequeue</td>
+                                <td>O(1)*</td>
+                                <td>Eliminación del frente</td>
+                            </tr>
+                            <tr>
+                                <td>Front/Peek</td>
+                                <td>O(1)</td>
+                                <td>Acceso al primer elemento</td>
+                            </tr>
+                            <tr>
+                                <td>Search</td>
+                                <td>O(n)</td>
+                                <td>Búsqueda lineal</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <small>*O(1) con implementación optimizada (cola circular o lista enlazada)</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modales restantes con contenido abreviado para mantener el código manejable -->
+        <div id="comparison-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <svg class="topic-icon" viewBox="0 0 100 100">
+                        <circle cx="30" cy="30" r="20" fill="rgba(255,255,255,0.8)" opacity="0.7"/>
+                        <circle cx="70" cy="30" r="20" fill="rgba(255,255,255,0.6)" opacity="0.7"/>
+                        <circle cx="50" cy="70" r="20" fill="rgba(255,255,255,0.9)" opacity="0.7"/>
+                    </svg>
+                    <h2>Comparación y Casos de Uso</h2>
+                    <span class="close" onclick="closeModal('comparison-modal')">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <h4>🔄 Cuándo usar cada estructura:</h4>
+                    <div class="advantages">
+                        <strong>📋 Usar Listas Enlazadas cuando:</strong>
+                        <ul>
+                            <li>El tamaño de los datos es variable</li>
+                            <li>Se realizan muchas inserciones/eliminaciones</li>
+                            <li>No se necesita acceso aleatorio</li>
+                            <li>Se implementan otras estructuras (pilas, colas)</li>
+                        </ul>
+                    </div>
+                    <div class="disadvantages">
+                        <strong>🔄 Usar Colas cuando:</strong>
+                        <ul>
+                            <li>Se necesita procesamiento FIFO</li>
+                            <li>Manejo de recursos compartidos</li>
+                            <li>Algoritmos de búsqueda (BFS)</li>
+                            <li>Sistemas de buffering</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="advanced-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <svg class="topic-icon" viewBox="0 0 100 100">
+                        <polygon points="50,10 90,30 70,70 30,70 10,30" fill="rgba(255,255,255,0.9)" opacity="0.8"/>
+                        <circle cx="50" cy="40" r="15" fill="white"/>
+                        <text x="50" y="45" style="font-size: 10px; fill: #4299e1; text-anchor: middle; dominant-baseline: middle;">ADV</text>
+                    </svg>
+                    <h2>Implementaciones Avanzadas</h2>
+                    <span class="close" onclick="closeModal('advanced-modal')">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <h4>🚀 Lista Doblemente Enlazada:</h4>
+                    <p>Cada nodo tiene punteros tanto al siguiente como al anterior nodo, permitiendo navegación bidireccional.</p>
+                    <h4>🔄 Cola Circular:</h4>
+                    <p>Optimiza el uso de memoria reutilizando espacios liberados.</p>
+                    <h4>⭐ Cola de Prioridad:</h4>
+                    <p>Los elementos se procesan según su prioridad, no según el orden de llegada.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="exercises-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <svg class="topic-icon" viewBox="0 0 100 100">
+                        <rect x="20" y="20" width="60" height="60" rx="10" fill="rgba(255,255,255,0.4)" opacity="0.3"/>
+                        <path d="M30,35 L40,45 L60,25" stroke="white" stroke-width="3" fill="none"/>
+                    </svg>
+                    <h2>Ejercicios Prácticos</h2>
+                    <span class="close" onclick="closeModal('exercises-modal')">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <h4>💪 Problemas para resolver:</h4>
+                    <div class="advantages">
+                        <strong>🔗 Ejercicios con Listas Enlazadas:</strong>
+                        <ol>
+                            <li><strong>Invertir una lista:</strong> Cambiar el orden de los nodos</li>
+                            <li><strong>Detectar ciclos:</strong> Usar algoritmo de Floyd (tortuga y liebre)</li>
+                            <li><strong>Encontrar el medio:</strong> Técnica de dos punteros</li>
+                            <li><strong>Fusionar listas ordenadas:</strong> Combinar manteniendo orden</li>
+                        </ol>
+                    </div>
+                    <div class="disadvantages">
+                        <strong>🔄 Ejercicios con Colas:</strong>
+                        <ol>
+                            <li><strong>Simulador de banco:</strong> Atención a clientes por orden de llegada</li>
+                            <li><strong>Buffer de impresión:</strong> Gestión de trabajos de impresión</li>
+                            <li><strong>BFS en grafos:</strong> Recorrido por niveles</li>
+                            <li><strong>Palíndromo con deque:</strong> Verificar palabras palíndromas</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección Visual Interactiva -->
+        <div class="visual-section">
+            <h3>🎨 Visualización Interactiva Espectacular</h3>
+            <p>Experimenta con las operaciones de estructuras de datos:</p>
+            
+            <!-- Controles de Animación -->
+            <div style="margin: 20px 0;">
+                <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn" onclick="animateInsertStart()">🔵 Insertar al Inicio</button>
+                    <button class="btn" onclick="animateInsertEnd()">� Insertar al Final</button>
+                    <button class="btn" onclick="animateDelete()">🔴 Eliminar Nodo</button>
+                    <button class="btn" onclick="animateEnqueue()">➕ Push (Enqueue)</button>
+                    <button class="btn" onclick="animateDequeue()">➖ Pop (Dequeue)</button>
+                    <button class="btn" onclick="resetVisualization()">🔄 Reiniciar</button>
+                </div>
+                <div id="operation-status" style="text-align: center; margin: 15px 0; min-height: 30px; font-weight: bold; color: #4a5568; font-size: 1.1em;"></div>
+            </div>
+            
+            <div class="animation-container">
+                <svg width="800" height="400" id="visualization">
+                    <defs>
+                        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="#2b6cb0"/>
+                        </marker>
+                        <marker id="arrowhead-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="#48bb78"/>
+                        </marker>
+                        <marker id="arrowhead-red" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="#f56565"/>
+                        </marker>
+                        <marker id="arrowhead-white" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="white"/>
+                        </marker>
+                        
+                        <!-- Gradientes para efectos -->
+                        <linearGradient id="nodeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#4299e1;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#2b6cb0;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="newNodeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#48bb78;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#38a169;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="deleteNodeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#f56565;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#e53e3e;stop-opacity:1" />
+                        </linearGradient>
+                        
+                        <!-- Filtros para efectos brillantes -->
+                        <filter id="glow">
+                            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                            <feMerge> 
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/> 
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    
+                    <!-- Lista enlazada mejorada -->
+                    <g id="linked-list" transform="translate(50, 80)">
+                        <!-- Nodo 1 -->
+                        <g class="list-node" data-value="10">
+                            <circle cx="0" cy="0" r="30" fill="url(#nodeGradient)" stroke="#2b6cb0" stroke-width="3" filter="url(#glow)"/>
+                            <text x="0" y="6" class="node-text" style="font-size: 16px; font-weight: bold;">10</text>
+                            <line x1="30" y1="0" x2="90" y2="0" class="link-line" stroke-width="3"/>
+                        </g>
+                        
+                        <!-- Nodo 2 -->
+                        <g class="list-node" data-value="20">
+                            <circle cx="120" cy="0" r="30" fill="url(#nodeGradient)" stroke="#2b6cb0" stroke-width="3" filter="url(#glow)"/>
+                            <text x="120" y="6" class="node-text" style="font-size: 16px; font-weight: bold;">20</text>
+                            <line x1="150" y1="0" x2="210" y2="0" class="link-line" stroke-width="3"/>
+                        </g>
+                        
+                        <!-- Nodo 3 -->
+                        <g class="list-node" data-value="30">
+                            <circle cx="240" cy="0" r="30" fill="url(#nodeGradient)" stroke="#2b6cb0" stroke-width="3" filter="url(#glow)"/>
+                            <text x="240" y="6" class="node-text" style="font-size: 16px; font-weight: bold;">30</text>
+                            <line x1="270" y1="0" x2="300" y2="0" class="link-line" stroke-width="2" stroke="#666"/>
+                            <text x="310" y="6" style="font-size: 14px; fill: #666;">NULL</text>
+                        </g>
+                        
+                        <!-- Etiquetas -->
+                        <text x="120" y="-60" style="text-anchor: middle; font-weight: bold; fill: #4a5568; font-size: 18px;">Lista Enlazada - Operaciones Dinámicas</text>
+                        <text x="-20" y="-30" style="font-size: 12px; fill: #48bb78; font-weight: bold;">CABEZA</text>
+                        <path d="M-15,-25 L-5,-5" stroke="#48bb78" stroke-width="2" marker-end="url(#arrowhead-green)"/>
+                    </g>
+                    
+                    <!-- Cola con animaciones mejoradas -->
+                    <g id="queue-container" transform="translate(50, 280)">
+                        <!-- Marco de la cola con gradiente -->
+                        <rect x="0" y="-30" width="450" height="60" rx="8" fill="none" stroke="#4299e1" stroke-width="4"/>
+                        
+                        <!-- Indicadores mejorados -->
+                        <text x="-20" y="8" style="font-size: 16px; fill: #4299e1; font-weight: bold;">Frente</text>
+                        <text x="400" y="8" style="font-size: 16px; fill: #4299e1; font-weight: bold;">Final</text>
+                        
+                        <!-- Flechas direccionales -->
+                        <g id="push-arrow" style="opacity: 0;">
+                            <line x1="500" y1="0" x2="460" y2="0" stroke="#48bb78" stroke-width="4" marker-end="url(#arrowhead-green)"/>
+                            <text x="510" y="-15" style="font-size: 14px; fill: #48bb78; font-weight: bold;">PUSH</text>
+                            <text x="510" y="20" style="font-size: 14px; fill: #48bb78; font-weight: bold;">(Enqueue)</text>
+                        </g>
+                        
+                        <g id="pop-arrow" style="opacity: 0;">
+                            <line x1="-60" y1="0" x2="-20" y2="0" stroke="#f56565" stroke-width="4" marker-end="url(#arrowhead-red)"/>
+                            <text x="-100" y="-15" style="font-size: 14px; fill: #f56565; font-weight: bold;">POP</text>
+                            <text x="-100" y="20" style="font-size: 14px; fill: #f56565; font-weight: bold;">(Dequeue)</text>
+                        </g>
+                        
+                        <!-- Elementos de la cola con efectos -->
+                        <g id="queue">
+                            <g class="queue-item">
+                                <rect x="25" y="-20" width="40" height="40" fill="url(#nodeGradient)" rx="5" stroke="#2b6cb0" stroke-width="2" filter="url(#glow)"/>
+                                <text x="45" y="6" class="node-text" style="font-size: 16px; font-weight: bold;">A</text>
+                            </g>
+                            
+                            <g class="queue-item">
+                                <rect x="85" y="-20" width="40" height="40" fill="url(#nodeGradient)" rx="5" stroke="#2b6cb0" stroke-width="2" filter="url(#glow)"/>
+                                <text x="105" y="6" class="node-text" style="font-size: 16px; font-weight: bold;">B</text>
+                            </g>
+                            
+                            <g class="queue-item">
+                                <rect x="145" y="-20" width="40" height="40" fill="url(#nodeGradient)" rx="5" stroke="#2b6cb0" stroke-width="2" filter="url(#glow)"/>
+                                <text x="165" y="6" class="node-text" style="font-size: 16px; font-weight: bold;">C</text>
+                            </g>
+                        </g>
+                        
+                        <!-- Etiqueta mejorada -->
+                        <text x="225" y="-50" style="text-anchor: middle; font-weight: bold; fill: #4a5568; font-size: 18px;">Cola FIFO - Push & Pop</text>
+                        
+                        <!-- Área para animaciones -->
+                        <g id="new-element-area"></g>
+                    </g>
+                    
+                    <!-- Explicación dinámica mejorada -->
+                    <rect x="50" y="360" width="700" height="30" rx="15" fill="rgba(74, 85, 104, 0.1)" stroke="rgba(74, 85, 104, 0.2)"/>
+                    <text x="400" y="380" id="explanation-text" style="text-anchor: middle; font-size: 16px; fill: #4a5568; font-style: italic; font-weight: 500;"></text>
+                </svg>
+            </div>
+            
+            <!-- Información sobre operaciones con mejor diseño -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 30px;">
+                <div style="background: linear-gradient(135deg, rgba(66, 153, 225, 0.1) 0%, rgba(66, 153, 225, 0.05) 100%); padding: 20px; border-radius: 15px; border: 2px solid rgba(66, 153, 225, 0.2);">
+                    <h4 style="color: #4299e1; margin-bottom: 10px;">� Insertar al Inicio</h4>
+                    <p style="color: #4a5568; margin: 0; font-size: 0.9em;">O(1) - Agrega nodo al comienzo de la lista</p>
+                </div>
+                <div style="background: linear-gradient(135deg, rgba(72, 187, 120, 0.1) 0%, rgba(72, 187, 120, 0.05) 100%); padding: 20px; border-radius: 15px; border: 2px solid rgba(72, 187, 120, 0.2);">
+                    <h4 style="color: #48bb78; margin-bottom: 10px;">🟢 Insertar al Final</h4>
+                    <p style="color: #4a5568; margin: 0; font-size: 0.9em;">O(n) - Recorre la lista hasta el final</p>
+                </div>
+                <div style="background: linear-gradient(135deg, rgba(245, 101, 101, 0.1) 0%, rgba(245, 101, 101, 0.05) 100%); padding: 20px; border-radius: 15px; border: 2px solid rgba(245, 101, 101, 0.2);">
+                    <h4 style="color: #f56565; margin-bottom: 10px;">🔴 Eliminar Nodo</h4>
+                    <p style="color: #4a5568; margin: 0; font-size: 0.9em;">O(n) - Busca y elimina el nodo especificado</p>
+                </div>
+                <div style="background: linear-gradient(135deg, rgba(72, 187, 120, 0.1) 0%, rgba(72, 187, 120, 0.05) 100%); padding: 20px; border-radius: 15px; border: 2px solid rgba(72, 187, 120, 0.2);">
+                    <h4 style="color: #48bb78; margin-bottom: 10px;">➕ Push (Enqueue)</h4>
+                    <p style="color: #4a5568; margin: 0; font-size: 0.9em;">O(1) - Agrega elemento al final de la cola</p>
+                </div>
+                <div style="background: linear-gradient(135deg, rgba(245, 101, 101, 0.1) 0%, rgba(245, 101, 101, 0.05) 100%); padding: 20px; border-radius: 15px; border: 2px solid rgba(245, 101, 101, 0.2);">
+                    <h4 style="color: #f56565; margin-bottom: 10px;">➖ Pop (Dequeue)</h4>
+                    <p style="color: #4a5568; margin: 0; font-size: 0.9em;">O(1) - Remueve elemento del frente</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Referencias y Material Complementario -->
+        <footer class="footer">
+            <h3>📚 Material Complementario</h3>
+            <p>Recursos adicionales para profundizar en el tema:</p>
+            
+            <div class="reference-links">
+                <div class="reference-card">
+                    <h4>📖 Libros Recomendados</h4>
+                    <ul>
+                        <li>"Introduction to Algorithms" - Cormen, Leiserson, Rivest, Stein</li>
+                        <li>"Data Structures and Algorithms in Python" - Goodrich, Tamassia</li>
+                        <li>"Algorithms, Part I" - Robert Sedgewick</li>
+                    </ul>
+                </div>
+                
+                <div class="reference-card">
+                    <h4>💻 Plataformas de Práctica</h4>
+                    <ul>
+                        <li>LeetCode - Problemas de estructuras de datos</li>
+                        <li>HackerRank - Data Structures track</li>
+                        <li>GeeksforGeeks - Tutoriales y ejercicios</li>
+                        <li>Visualgo - Visualizaciones interactivas</li>
+                    </ul>
+                </div>
+                
+                <div class="reference-card">
+                    <h4>🎥 Videos Educativos</h4>
+                    <ul>
+                        <li>MIT OpenCourseWare - Algorithms & Data Structures</li>
+                        <li>CS50 - Harvard's Computer Science Course</li>
+                        <li>YouTube - mycodeschool Data Structures</li>
+                    </ul>
+                </div>
+                
+                <div class="reference-card">
+                    <h4>🔧 Herramientas de Visualización</h4>
+                    <ul>
+                        <li>Python Tutor - Visualiza ejecución de código</li>
+                        <li>Data Structure Visualizations (USF)</li>
+                        <li>Algorithm Visualizer</li>
+                        <li>VisuAlgo - Algoritmos animados</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.3);">
+                <p><strong>Autor:</strong> Alexander Narváez</p>
+                <p><strong>Institución:</strong> EAFIT 2025</p>
+                <p><strong>Curso:</strong> Algoritmos y Estructuras de Datos 1</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Variables globales para controlar las animaciones
+        let nextNodeId = 4;
+        let isAnimating = false;
+
+        // Funciones para modales
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Cerrar modal al hacer clic fuera de él
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Funciones de utilidad para animaciones
+        function updateStatus(message) {
+            const statusElement = document.getElementById('operation-status');
+            statusElement.textContent = message;
+            statusElement.style.background = message.includes('✅') ? 'rgba(72, 187, 120, 0.1)' : 
+                                          message.includes('❌') ? 'rgba(245, 101, 101, 0.1)' : 
+                                          'rgba(66, 153, 225, 0.1)';
+            statusElement.style.padding = '10px 20px';
+            statusElement.style.borderRadius = '20px';
+            statusElement.style.border = message.includes('✅') ? '1px solid #48bb78' : 
+                                       message.includes('❌') ? '1px solid #f56565' : 
+                                       '1px solid #4299e1';
+        }
+
+        function setExplanation(text) {
+            const explanationElement = document.getElementById('explanation-text');
+            explanationElement.textContent = text;
+        }
+
+        // ANIMACIÓN 1: Insertar al Inicio (Espectacular)
+        function animateInsertStart() {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            updateStatus("🔵 Insertando nuevo nodo al INICIO de la lista...");
+            setExplanation("Operación: Insertar al inicio - O(1) - El nuevo nodo se convierte en la cabeza");
+
+            const linkedList = document.getElementById('linked-list');
+            const newValue = nextNodeId * 10;
+
+            // Crear nuevo nodo fuera de la pantalla
+            const newNode = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            newNode.classList.add('list-node');
+            newNode.setAttribute('data-value', newValue);
+            newNode.innerHTML = `
+                <circle cx="-150" cy="-80" r="30" fill="url(#newNodeGradient)" stroke="#38a169" stroke-width="3" filter="url(#glow)" style="opacity: 0;"/>
+                <text x="-150" y="-74" class="node-text" style="font-size: 16px; font-weight: bold; opacity: 0;">${newValue}</text>
+            `;
+
+            linkedList.appendChild(newNode);
+
+            // Fase 1: Aparecer el nodo
+            let opacity = 0;
+            const fadeInInterval = setInterval(() => {
+                opacity += 0.05;
+                newNode.querySelector('circle').style.opacity = opacity;
+                newNode.querySelector('text').style.opacity = opacity;
+                
+                if (opacity >= 1) {
+                    clearInterval(fadeInInterval);
+                    
+                    // Fase 2: Mover hacia la posición inicial
+                    let xPos = -150;
+                    let yPos = -80;
+                    const moveInterval = setInterval(() => {
+                        xPos += 8;
+                        yPos += 4;
+                        
+                        newNode.querySelector('circle').setAttribute('cx', xPos);
+                        newNode.querySelector('text').setAttribute('x', xPos);
+                        newNode.querySelector('circle').setAttribute('cy', yPos);
+                        newNode.querySelector('text').setAttribute('y', yPos + 6);
+                        
+                        if (xPos >= 0 && yPos >= 0) {
+                            clearInterval(moveInterval);
+                            
+                            // Fase 3: Conectar con el resto de la lista
+                            setTimeout(() => {
+                                // Cambiar color a normal
+                                newNode.querySelector('circle').setAttribute('fill', 'url(#nodeGradient)');
+                                newNode.querySelector('circle').setAttribute('stroke', '#2b6cb0');
+                                
+                                // Agregar enlace al siguiente
+                                const link = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                                link.setAttribute('x1', '30');
+                                link.setAttribute('y1', '0');
+                                link.setAttribute('x2', '90');
+                                link.setAttribute('y2', '0');
+                                link.setAttribute('class', 'link-line');
+                                link.setAttribute('stroke-width', '3');
+                                newNode.appendChild(link);
+                                
+                                // Mover todos los nodos existentes hacia la derecha
+                                const existingNodes = linkedList.querySelectorAll('.list-node');
+                                existingNodes.forEach((node, index) => {
+                                    if (node !== newNode) {
+                                        const circle = node.querySelector('circle');
+                                        const text = node.querySelector('text');
+                                        const currentX = parseFloat(circle.getAttribute('cx'));
+                                        const newX = currentX + 120;
+                                        
+                                        circle.setAttribute('cx', newX);
+                                        text.setAttribute('x', newX);
+                                        
+                                        // Actualizar enlaces
+                                        const lines = node.querySelectorAll('line');
+                                        lines.forEach(line => {
+                                            const x1 = parseFloat(line.getAttribute('x1'));
+                                            const x2 = parseFloat(line.getAttribute('x2'));
+                                            line.setAttribute('x1', x1 + 120);
+                                            line.setAttribute('x2', x2 + 120);
+                                        });
+                                    }
+                                });
+                                
+                                // Actualizar flecha de cabeza
+                                const headArrow = linkedList.querySelector('path');
+                                if (headArrow) {
+                                    headArrow.setAttribute('d', 'M-15,-25 L-5,-5');
+                                }
+                                
+                                updateStatus("✅ Nodo insertado correctamente al INICIO - Nueva cabeza de la lista");
+                                setExplanation("Nuevo nodo es ahora la cabeza. Operación completada en O(1)");
+                                
+                                nextNodeId++;
+                                setTimeout(() => {
+                                    updateStatus("");
+                                    setExplanation("");
+                                    isAnimating = false;
+                                }, 2000);
+                            }, 500);
+                        }
+                    }, 50);
+                }
+            }, 50);
+        }
+
+        // ANIMACIÓN 2: Insertar al Final (Espectacular)
+        function animateInsertEnd() {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            updateStatus("🟢 Insertando nuevo nodo al FINAL de la lista...");
+            setExplanation("Operación: Insertar al final - O(n) - Debe recorrer toda la lista");
+
+            const linkedList = document.getElementById('linked-list');
+            const newValue = nextNodeId * 10;
+
+            // Crear indicador de búsqueda del final
+            const searchIndicator = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            searchIndicator.setAttribute('cx', '0');
+            searchIndicator.setAttribute('cy', '-40');
+            searchIndicator.setAttribute('r', '8');
+            searchIndicator.setAttribute('fill', '#48bb78');
+            searchIndicator.setAttribute('opacity', '0.8');
+            linkedList.appendChild(searchIndicator);
+
+            // Fase 1: Recorrer la lista buscando el final
+            let currentPos = 0;
+            const nodes = linkedList.querySelectorAll('.list-node');
+            const lastNodeX = parseFloat(nodes[nodes.length - 1].querySelector('circle').getAttribute('cx'));
+            
+            const searchInterval = setInterval(() => {
+                currentPos += 6;
+                searchIndicator.setAttribute('cx', currentPos);
+                
+                if (currentPos >= lastNodeX) {
+                    clearInterval(searchInterval);
+                    searchIndicator.remove();
+                    
+                    // Fase 2: Crear y posicionar el nuevo nodo
+                    const newNode = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                    newNode.classList.add('list-node');
+                    newNode.setAttribute('data-value', newValue);
+                    
+                    const newX = lastNodeX + 120;
+                    newNode.innerHTML = `
+                        <circle cx="${newX}" cy="-100" r="30" fill="url(#newNodeGradient)" stroke="#38a169" stroke-width="3" filter="url(#glow)" style="opacity: 0;"/>
+                        <text x="${newX}" y="-94" class="node-text" style="font-size: 16px; font-weight: bold; opacity: 0;">${newValue}</text>
+                    `;
+                    
+                    linkedList.appendChild(newNode);
+                    
+                    // Fase 3: Animar aparición y descenso
+                    let opacity = 0;
+                    let yPos = -100;
+                    const descendInterval = setInterval(() => {
+                        opacity += 0.05;
+                        yPos += 3;
+                        
+                        newNode.querySelector('circle').style.opacity = opacity;
+                        newNode.querySelector('text').style.opacity = opacity;
+                        newNode.querySelector('circle').setAttribute('cy', yPos);
+                        newNode.querySelector('text').setAttribute('y', yPos + 6);
+                        
+                        if (yPos >= 0 && opacity >= 1) {
+                            clearInterval(descendInterval);
+                            
+                            // Fase 4: Conectar con el nodo anterior
+                            setTimeout(() => {
+                                // Cambiar color a normal
+                                newNode.querySelector('circle').setAttribute('fill', 'url(#nodeGradient)');
+                                newNode.querySelector('circle').setAttribute('stroke', '#2b6cb0');
+                                
+                                // Agregar enlace desde el nodo anterior
+                                const previousNode = nodes[nodes.length - 1];
+                                const link = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                                link.setAttribute('x1', parseFloat(previousNode.querySelector('circle').getAttribute('cx')) + 30);
+                                link.setAttribute('y1', '0');
+                                link.setAttribute('x2', newX - 30);
+                                link.setAttribute('y2', '0');
+                                link.setAttribute('class', 'link-line');
+                                link.setAttribute('stroke-width', '3');
+                                previousNode.appendChild(link);
+                                
+                                // Agregar NULL al final
+                                const nullLink = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                                nullLink.setAttribute('x1', newX + 30);
+                                nullLink.setAttribute('y1', '0');
+                                nullLink.setAttribute('x2', newX + 60);
+                                nullLink.setAttribute('y2', '0');
+                                nullLink.setAttribute('class', 'link-line');
+                                nullLink.setAttribute('stroke-width', '2');
+                                nullLink.setAttribute('stroke', '#666');
+                                newNode.appendChild(nullLink);
+                                
+                                const nullText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                                nullText.setAttribute('x', newX + 70);
+                                nullText.setAttribute('y', '6');
+                                nullText.setAttribute('style', 'font-size: 14px; fill: #666;');
+                                nullText.textContent = 'NULL';
+                                newNode.appendChild(nullText);
+                                
+                                updateStatus("✅ Nodo insertado correctamente al FINAL de la lista");
+                                setExplanation("Nuevo nodo agregado al final. Operación completada en O(n)");
+                                
+                                nextNodeId++;
+                                setTimeout(() => {
+                                    updateStatus("");
+                                    setExplanation("");
+                                    isAnimating = false;
+                                }, 2000);
+                            }, 500);
+                        }
+                    }, 50);
+                }
+            }, 80);
+        }
+
+        // ANIMACIÓN 3: Eliminar Nodo (Espectacular)
+        function animateDelete() {
+            if (isAnimating) return;
+            
+            const nodes = document.querySelectorAll('.list-node');
+            if (nodes.length <= 1) {
+                updateStatus("❌ Lista tiene pocos elementos para eliminar");
+                return;
+            }
+            
+            isAnimating = true;
+            updateStatus("🔴 Eliminando nodo del medio de la lista...");
+            setExplanation("Operación: Eliminar nodo - O(n) - Buscar y reconectar enlaces");
+
+            // Eliminar el segundo nodo (índice 1)
+            const nodeToDelete = nodes[1];
+            const circle = nodeToDelete.querySelector('circle');
+            const value = nodeToDelete.getAttribute('data-value');
+            
+            // Fase 1: Destacar nodo a eliminar
+            circle.setAttribute('fill', 'url(#deleteNodeGradient)');
+            circle.setAttribute('stroke', '#e53e3e');
+            
+            setTimeout(() => {
+                // Fase 2: Animar eliminación con efecto de explosión
+                let scale = 1;
+                let opacity = 1;
+                const deleteInterval = setInterval(() => {
+                    scale += 0.1;
+                    opacity -= 0.05;
+                    
+                    circle.style.transform = `scale(${scale})`;
+                    circle.style.opacity = opacity;
+                    nodeToDelete.querySelector('text').style.opacity = opacity;
+                    
+                    if (opacity <= 0) {
+                        clearInterval(deleteInterval);
+                        
+                        // Fase 3: Reorganizar nodos restantes
+                        const remainingNodes = Array.from(document.querySelectorAll('.list-node')).filter(n => n !== nodeToDelete);
+                        
+                        // Mover nodos hacia la izquierda
+                        remainingNodes.forEach((node, index) => {
+                            const circle = node.querySelector('circle');
+                            const text = node.querySelector('text');
+                            const newX = index * 120;
+                            
+                            // Animar movimiento
+                            const currentX = parseFloat(circle.getAttribute('cx'));
+                            let pos = currentX;
+                            const moveInterval = setInterval(() => {
+                                pos -= 5;
+                                circle.setAttribute('cx', pos);
+                                text.setAttribute('x', pos);
+                                
+                                if (pos <= newX) {
+                                    clearInterval(moveInterval);
+                                    circle.setAttribute('cx', newX);
+                                    text.setAttribute('x', newX);
+                                }
+                            }, 30);
+                        });
+                        
+                        // Remover el nodo eliminado
+                        nodeToDelete.remove();
+                        
+                        // Reconstruir enlaces
+                        setTimeout(() => {
+                            remainingNodes.forEach((node, index) => {
+                                // Limpiar enlaces existentes
+                                const oldLinks = node.querySelectorAll('line');
+                                oldLinks.forEach(link => link.remove());
+                                
+                                // Agregar nuevo enlace si no es el último nodo
+                                if (index < remainingNodes.length - 1) {
+                                    const link = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                                    link.setAttribute('x1', '30');
+                                    link.setAttribute('y1', '0');
+                                    link.setAttribute('x2', '90');
+                                    link.setAttribute('y2', '0');
+                                    link.setAttribute('class', 'link-line');
+                                    link.setAttribute('stroke-width', '3');
+                                    node.appendChild(link);
+                                } else {
+                                    // Último nodo - agregar NULL
+                                    const nullLink = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                                    nullLink.setAttribute('x1', '30');
+                                    nullLink.setAttribute('y1', '0');
+                                    nullLink.setAttribute('x2', '60');
+                                    nullLink.setAttribute('y2', '0');
+                                    nullLink.setAttribute('stroke-width', '2');
+                                    nullLink.setAttribute('stroke', '#666');
+                                    node.appendChild(nullLink);
+                                    
+                                    const nullText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                                    nullText.setAttribute('x', '70');
+                                    nullText.setAttribute('y', '6');
+                                    nullText.setAttribute('style', 'font-size: 14px; fill: #666;');
+                                    nullText.textContent = 'NULL';
+                                    node.appendChild(nullText);
+                                }
+                            });
+                            
+                            updateStatus(`✅ Nodo con valor ${value} eliminado correctamente`);
+                            setExplanation("Nodo eliminado y enlaces reconstruidos. Lista reorganizada");
+                            
+                            setTimeout(() => {
+                                updateStatus("");
+                                setExplanation("");
+                                isAnimating = false;
+                            }, 2000);
+                        }, 1000);
+                    }
+                }, 50);
+            }, 1000);
+        }
+
+        // ANIMACIÓN 4: Push (Enqueue) - Mejorada
+        function animateEnqueue() {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            updateStatus("➕ Ejecutando PUSH (Enqueue) - Agregando elemento al final...");
+            
+            const queue = document.getElementById('queue');
+            const newElementArea = document.getElementById('new-element-area');
+            const pushArrow = document.getElementById('push-arrow');
+            
+            // Mostrar flecha de push con animación
+            pushArrow.style.opacity = '1';
+            pushArrow.style.transform = 'scale(1.1)';
+            setExplanation('PUSH: Nuevo elemento "D" siendo agregado al final de la cola');
+            
+            // Crear nuevo elemento fuera de la cola
+            const newElement = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            newElement.classList.add('queue-item');
+            newElement.innerHTML = `
+                <rect x="550" y="-20" width="40" height="40" fill="url(#newNodeGradient)" rx="5" stroke="#38a169" stroke-width="2" filter="url(#glow)"/>
+                <text x="570" y="6" class="node-text" style="font-size: 16px; font-weight: bold;">D</text>
+            `;
+            newElementArea.appendChild(newElement);
+            
+            // Animar movimiento hacia la cola
+            let position = 550;
+            const targetPosition = 205; // Posición después del elemento C
+            const interval = setInterval(() => {
+                position -= 10;
+                newElement.querySelector('rect').setAttribute('x', position);
+                newElement.querySelector('text').setAttribute('x', position + 20);
+                
+                if (position <= targetPosition) {
+                    clearInterval(interval);
+                    
+                    // Cambiar color a normal
+                    newElement.querySelector('rect').setAttribute('fill', 'url(#nodeGradient)');
+                    newElement.querySelector('rect').setAttribute('stroke', '#2b6cb0');
+                    
+                    // Mover a la cola principal
+                    queue.appendChild(newElement);
+                    newElement.querySelector('rect').setAttribute('x', targetPosition);
+                    newElement.querySelector('text').setAttribute('x', targetPosition + 20);
+                    
+                    // Ocultar flecha con animación
+                    pushArrow.style.opacity = '0';
+                    pushArrow.style.transform = 'scale(1)';
+                    updateStatus("✅ PUSH completado - Elemento agregado al final de la cola");
+                    setExplanation('Elemento "D" ahora está al final de la cola, será el último en salir');
+                    
+                    setTimeout(() => {
+                        setExplanation('');
+                        updateStatus("");
+                        isAnimating = false;
+                    }, 3000);
+                }
+            }, 60);
+        }
+
+        // ANIMACIÓN 5: Pop (Dequeue) - Mejorada
+        function animateDequeue() {
+            if (isAnimating) return;
+            
+            const queue = document.getElementById('queue');
+            const elements = queue.querySelectorAll('.queue-item');
+            
+            if (elements.length === 0) {
+                updateStatus("❌ Cola vacía - No hay elementos para hacer POP");
+                return;
+            }
+            
+            isAnimating = true;
+            updateStatus("➖ Ejecutando POP (Dequeue) - Removiendo elemento del frente...");
+            
+            const popArrow = document.getElementById('pop-arrow');
+            
+            // Mostrar flecha de pop con animación
+            popArrow.style.opacity = '1';
+            popArrow.style.transform = 'scale(1.1)';
+            setExplanation('POP: Removiendo el primer elemento de la cola (más antiguo)');
+            
+            const firstElement = elements[0];
+            const rect = firstElement.querySelector('rect');
+            const text = firstElement.querySelector('text');
+            
+            // Destacar elemento que se va a remover
+            rect.setAttribute('fill', 'url(#deleteNodeGradient)');
+            rect.setAttribute('stroke', '#e53e3e');
+            
+            setTimeout(() => {
+                // Animar salida del elemento con rotación
+                let opacity = 1;
+                let position = parseFloat(rect.getAttribute('x'));
+                let rotation = 0;
+                
+                const interval = setInterval(() => {
+                    opacity -= 0.04;
+                    position -= 4;
+                    rotation += 5;
+                    
+                    rect.style.opacity = opacity;
+                    text.style.opacity = opacity;
+                    rect.setAttribute('x', position);
+                    text.setAttribute('x', position + 20);
+                    rect.style.transform = `rotate(${rotation}deg)`;
+                    text.style.transform = `rotate(${rotation}deg)`;
+                    
+                    if (opacity <= 0) {
+                        clearInterval(interval);
+                        
+                        // Remover elementos
+                        firstElement.remove();
+                        
+                        // Mover elementos restantes hacia el frente con animación suave
+                        const remainingElements = queue.querySelectorAll('.queue-item');
+                        
+                        remainingElements.forEach((element, index) => {
+                            const rect = element.querySelector('rect');
+                            const text = element.querySelector('text');
+                            const currentX = parseFloat(rect.getAttribute('x'));
+                            const newX = 25 + (index * 60);
+                            
+                            let pos = currentX;
+                            const moveInterval = setInterval(() => {
+                                pos -= 3;
+                                rect.setAttribute('x', pos);
+                                text.setAttribute('x', pos + 20);
+                                
+                                if (pos <= newX) {
+                                    clearInterval(moveInterval);
+                                    rect.setAttribute('x', newX);
+                                    text.setAttribute('x', newX + 20);
+                                }
+                            }, 30);
+                        });
+                        
+                        // Ocultar flecha
+                        popArrow.style.opacity = '0';
+                        popArrow.style.transform = 'scale(1)';
+                        updateStatus("✅ POP completado - Elemento removido del frente");
+                        setExplanation('Elemento removido. Los demás elementos se mueven hacia el frente');
+                        
+                        setTimeout(() => {
+                            setExplanation('');
+                            updateStatus("");
+                            isAnimating = false;
+                        }, 3000);
+                    }
+                }, 60);
+            }, 1000);
+        }
+
+        // Reiniciar visualización
+        function resetVisualization() {
+            if (isAnimating) return;
+            
+            updateStatus("🔄 Reiniciando visualización...");
+            setTimeout(() => {
+                location.reload();
+            }, 500);
+        }
+
+        // Funciones de compatibilidad
+        function animateInsertion() { animateInsertStart(); }
+        function animateQueue() { animateDequeue(); }
+
+        // Efectos de entrada al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animar entrada de cards
+            const cards = document.querySelectorAll('.topic-card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(50px) scale(0.9)';
+                    card.style.transition = 'all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                    
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0) scale(1)';
+                    }, 100);
+                }, index * 150);
+            });
+
+            // Efectos hover mejorados para elementos SVG
+            const svgElements = document.querySelectorAll('.node, .queue-item circle, .queue-item rect');
+            svgElements.forEach(element => {
+                element.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.15)';
+                    this.style.transformOrigin = 'center';
+                    this.style.filter = 'url(#glow) brightness(1.1)';
+                });
+                
+                element.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                    this.style.filter = 'url(#glow)';
+                });
+            });
+
+            // Agregar estilos dinámicos
+            const style = document.createElement('style');
+            style.textContent = `
+                .queue-item, .list-node {
+                    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                }
+                .queue-item:hover, .list-node:hover {
+                    transform: translateY(-3px);
+                }
+                #operation-status {
+                    transition: all 0.4s ease;
+                }
+                .modal {
+                    transition: opacity 0.3s ease;
+                }
+                .btn {
+                    position: relative;
+                    overflow: hidden;
+                }
+                .btn:before {
+                    content: '';
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    width: 0;
+                    height: 0;
+                    border-radius: 50%;
+                    background: rgba(255, 255, 255, 0.3);
+                    transition: width 0.6s, height 0.6s, top 0.6s, left 0.6s;
+                    transform: translate(-50%, -50%);
+                }
+                .btn:hover:before {
+                    width: 300px;
+                    height: 300px;
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html>
