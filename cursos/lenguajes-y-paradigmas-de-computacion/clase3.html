@@ -1,0 +1,339 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 3 - Lenguaje y Paradigmas de Computación</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #2c3e50;
+            animation: gentleFade 1s ease-in;
+        }
+        @keyframes gentleFade {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        h1 {
+            color: #e74c3c;
+            text-align: center;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+            -webkit-background-clip: text;
+            color: transparent;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.2);
+        }
+        h2 {
+            color: #3498db;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 8px;
+            transition: color 0.3s ease, transform 0.3s ease;
+            position: relative;
+        }
+        h2:hover {
+            color: #2980b9;
+            transform: translateY(-2px);
+        }
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #e74c3c;
+            transition: width 0.3s ease;
+        }
+        h2:hover::after { width: 100%; }
+        .index {
+            border: 2px solid #ddd;
+            padding: 20px;
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            animation: liftUp 0.5s ease-out;
+        }
+        @keyframes liftUp {
+            from { transform: translateY(10px); }
+            to { transform: translateY(0); }
+        }
+        .index ul { list-style-type: none; padding-left: 0; }
+        .index a {
+            color: #e74c3c;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .index a:hover { color: #c0392b; text-decoration: underline; }
+        .code-block {
+            background: linear-gradient(135deg, #ecf0f1 0%, #d5dbdb 100%);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.1);
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            position: relative;
+            overflow-x: auto;
+        }
+        .code-block::before {
+            content: 'Código Haskell';
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            background: #ecf0f1;
+            padding: 0 5px;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        canvas {
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            margin: 15px 0;
+            animation: gentlePulse 2s infinite;
+        }
+        @keyframes gentlePulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+        svg {
+            border: 2px solid #e74c3c;
+            border-radius: 10px;
+            padding: 15px;
+            background: white;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        svg:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(231, 76, 60, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <h1>¡Bienvenido a Clase 3 - Lenguaje y Paradigmas de Computación! 🌟</h1>
+    
+    <div class="index">
+        <h2>Índice de Temas</h2>
+        <ul>
+            <li><a href="#intro">Introducción a Haskell 🌱</a></li>
+            <li><a href="#funciones-default">Funciones por Defecto ✨</a></li>
+            <li><a href="#creacion-scripts">Creación y Carga de Scripts 🌬️</a></li>
+            <li><a href="#ejemplos-funciones">Más Ejemplos de Funciones 🎉</a></li>
+            <li><a href="#material-apoyo">Material de Apoyo 📚</a></li>
+        </ul>
+    </div>
+
+    <section id="intro">
+        <h2>Introducción a Haskell</h2>
+        <p>Haskell es un lenguaje puramente funcional que te invita a explorar cálculos como funciones matemáticas. En lugar de secuencias de tareas, aquí definimos "qué son las cosas" con elegancia y precisión. ¡Un viaje fascinante te espera! 🌟</p>
+        <svg width="300" height="150">
+            <defs>
+                <radialGradient id="grad1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                    <stop offset="0%" style="stop-color:#ff7e5f;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#feb47b;stop-opacity:1" />
+                </radialGradient>
+            </defs>
+            <rect x="50" y="20" width="200" height="100" fill="url(#grad1)" />
+            <text x="150" y="70" font-size="20" text-anchor="middle" fill="white">¡Haskell!</text>
+        </svg>
+    </section>
+
+    <section id="funciones-default">
+        <h2>Funciones por Defecto</h2>
+        <p>Haskell incluye funciones poderosas listas para usar. Exploremos algunas:</p>
+        <div class="code-block">
+            ghci> succ 9<br>
+            10<br>
+            ghci> min 9 10<br>
+            9<br>
+            ghci> max 100 101<br>
+            101<br>
+            ghci> sum [1, 2, 3, 4]<br>
+            10<br>
+            ghci> product [2, 3, 4]<br>
+            24
+        </div>
+        <p><code>succ</code> devuelve el sucesor, <code>min</code> y <code>max</code> comparan valores, <code>sum</code> suma listas, y <code>product</code> multiplica elementos. ¡Juega con ellas en <code>ghci</code>! 💡</p>
+        <canvas id="defaultGraph" width="400" height="200"></canvas>
+        <script>
+            const ctx = document.getElementById('defaultGraph').getContext('2d');
+            const gradient = ctx.createLinearGradient(0, 0, 400, 0);
+            gradient.addColorStop(0, '#2ecc71');
+            gradient.addColorStop(1, '#27ae60');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(50, 50, 300, 100);
+            ctx.fillStyle = 'white';
+            ctx.font = '20px Arial';
+            ctx.fillText('¡Funciones Listas!', 150, 100);
+        </script>
+    </section>
+
+    <section id="creacion-scripts">
+        <h2>Creación y Carga de Scripts</h2>
+        <p>Crea tus propios scripts en archivos <code>.hs</code>. Por ejemplo, guarda esto en <code>miScript.hs</code>:</p>
+        <div class="code-block">
+            -- miScript.hs<br>
+            doble x = x * 2<br>
+            triple x = x * 3<br>
+            saludo = "¡Hola, Haskell!"
+        </div>
+        <p>Cárgalo en <code>ghci</code> con <code>:load miScript.hs</code> o <code>:l miScript.hs</code>. Recarga con <code>:r</code>. ¡Invoca tus funciones así!</p>
+        <div class="code-block">
+            ghci> :l miScript.hs<br>
+            *Main> doble 5<br>
+            10<br>
+            *Main> triple 5<br>
+            15<br>
+            *Main> saludo<br>
+            "¡Hola, Haskell!"<br>
+            *Main> :r<br>
+            *Main> doble 10<br>
+            20
+        </div>
+        <p>Agrega un <code>main</code> para ejecutar scripts directamente:</p>
+        <div class="code-block">
+            -- miScriptConMain.hs<br>
+            main :: IO ()<br>
+            main = do<br>
+                putStrLn "Doble de 5:"<br>
+                print (doble 5)<br>
+                putStrLn "Triple de 5:"<br>
+                print (triple 5)<br><br>
+            doble x = x * 2<br>
+            triple x = x * 3
+        </div>
+        <p>Compílalo con <code>ghc miScriptConMain.hs</code> y ejecuta <code>./miScriptConMain</code> para ver la magia. 🌟</p>
+        <svg width="300" height="150">
+            <defs>
+                <radialGradient id="grad2" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                    <stop offset="0%" style="stop-color:#e74c3c;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#c0392b;stop-opacity:1" />
+                </radialGradient>
+            </defs>
+            <circle cx="150" cy="75" r="50" fill="url(#grad2)" />
+            <text x="150" y="80" font-size="15" text-anchor="middle" fill="white">¡Scripts!</text>
+            <line x1="100" y1="75" x2="200" y2="75" stroke="white" stroke-width="2" />
+        </svg>
+    </section>
+
+    <section id="ejemplos-funciones">
+        <h2>Más Ejemplos de Funciones</h2>
+        <p>Profundicemos en funciones con declaraciones de tipo. En Haskell, los tipos son clave:</p>
+        <div class="code-block">
+            -- Declaración de tipo explícita<br>
+            areaCirculo :: Float -> Float<br>
+            areaCirculo r = 3.14159 * r * r<br><br>
+            esPar :: Int -> Bool<br>
+            esPar x = x `mod` 2 == 0<br><br>
+            -- Script: misFunciones.hs<br>
+            factorial :: Integer -> Integer<br>
+            factorial 0 = 1<br>
+            factorial n = n * factorial (n - 1)<br><br>
+            -- Carga y uso<br>
+            ghci> :l misFunciones.hs<br>
+            *Main> areaCirculo 5<br>
+            78.53975<br>
+            *Main> esPar 4<br>
+            True<br>
+            *Main> factorial 5<br>
+            120
+        </div>
+        <p>El <code>main</code> con <code>do</code> permite secuencias de E/S:</p>
+        <div class="code-block">
+            -- mainEjemplo.hs<br>
+            main :: IO ()<br>
+            main = do<br>
+                putStrLn "Factorial de 5:"<br>
+                print (factorial 5)<br>
+                putStrLn "Área de círculo (r=5):"<br>
+                print (areaCirculo 5)
+        </div>
+        <p>Compila con <code>ghc mainEjemplo.hs</code> y ejecuta <code>./mainEjemplo</code>. ¡Explora y crea! 🎉</p>
+        <canvas id="mathGraph" width="400" height="200"></canvas>
+        <script>
+            const ctx2 = document.getElementById('mathGraph').getContext('2d');
+            const gradient2 = ctx2.createLinearGradient(0, 0, 400, 0);
+            gradient2.addColorStop(0, '#9b59b6');
+            gradient2.addColorStop(1, '#8e44ad');
+            ctx2.fillStyle = gradient2;
+            ctx2.beginPath();
+            ctx2.moveTo(50, 150);
+            ctx2.lineTo(350, 150);
+            ctx2.lineTo(200, 50);
+            ctx2.closePath();
+            ctx2.fill();
+            ctx2.strokeStyle = 'white';
+            ctx2.stroke();
+            ctx2.fillStyle = 'white';
+            ctx2.fillText('¡Factorial 5 = 120!', 150, 100);
+        </script>
+    </section>
+
+    <section id="material-apoyo">
+        <h2>Material de Apoyo</h2>
+        <p>¡Amplía tu viaje con Haskell! Aquí tienes recursos valiosos:</p>
+        <ul>
+            <li><a href="https://www.haskell.org/" target="_blank">Sitio Oficial de Haskell</a> - Documentación y comunidad.</li>
+            <li><a href="https://learnyouahaskell.com/" target="_blank">Learn You a Haskell</a> - Tutorial interactivo y divertido.</li>
+            <li><a href="https://wiki.haskell.org/" target="_blank">Haskell Wiki</a> - Guías y ejemplos avanzados.</li>
+        </ul>
+        <p>¡Explora, practica y comparte tu progreso! 📚</p>
+        <svg width="300" height="150">
+            <defs>
+                <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3498db;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2980b9;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+            <rect x="50" y="20" width="200" height="100" fill="url(#grad3)" />
+            <text x="150" y="70" font-size="20" text-anchor="middle" fill="white">¡Aprende!</text>
+        </svg>
+    </section>
+</body>
+</html>

@@ -191,7 +191,7 @@
 <div style="--sidebar-width:16rem;--sidebar-width-icon:3rem" class="flex min-h-svh w-full">
     <div class="sidebar" id="sidebar">
         <div class="toggle-sidebar" onclick="toggleSidebar()">
-            <svg width="24", height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 18h18"></path>
                 <path d="M3 6h18"></path>
                 <path d="M3 12h18"></path>
@@ -377,6 +377,8 @@
             src = 'clase2.html';
         } else if (clase === 'clase2' && type === 'notas') {
             src = 'notasclase2.html';
+        } else if (clase === 'clase3' && type === 'memorias') {
+            src = 'clase3.html';
         } else {
             src = `${type}_${clase}.html`;
         }
