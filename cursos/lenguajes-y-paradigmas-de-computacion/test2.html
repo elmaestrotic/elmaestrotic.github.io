@@ -1,0 +1,209 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicios de Haskell</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .exercise {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .solution {
+            display: none;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-left: 3px solid #4CAF50;
+            margin-top: 10px;
+        }
+        .solution-toggle {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        .solution-toggle:hover {
+            background-color: #45a049;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ejercicios de Haskell - Enunciado y Solución</h1>
+
+    <div class="exercise">
+        <h3>1. Suma de enteros</h3>
+        <p>📝 Enunciado: Crea una función llamada <code>suma</code> que reciba dos enteros y devuelva su suma.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution1')">Ver solución</button>
+        <div id="solution1" class="solution">
+            <pre>suma :: Int -> Int -> Int
+suma x y = x + y</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>2. Suma de flotantes</h3>
+        <p>📝 Enunciado: Crea una función <code>suma</code> que reciba dos números decimales (Float) y devuelva el resultado.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution2')">Ver solución</button>
+        <div id="solution2" class="solution">
+            <pre>suma :: Float -> Float -> Float
+suma x y = x + y</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>3. Saludo simple con nombre</h3>
+        <p>📝 Enunciado: Escribe una función <code>saludo</code> que reciba un nombre y retorne un mensaje como "Hola Alexander".</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution3')">Ver solución</button>
+        <div id="solution3" class="solution">
+            <pre>saludo :: String -> String
+saludo x = "Hola " ++ x</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>4. Saludo con nombre y apellido</h3>
+        <p>📝 Enunciado: Escribe una función que reciba nombre y apellido y retorne un mensaje como "Hola Alexander Narváez".</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution4')">Ver solución</button>
+        <div id="solution4" class="solution">
+            <pre>saludo :: String -> String -> String
+saludo x y = "Hola " ++ x ++ " " ++ y</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>5. Saludo con edad (con show)</h3>
+        <p>📝 Enunciado: Crea una función <code>saludo</code> que reciba un nombre y una edad (Int) y devuelva un mensaje como "Hola Alexander, tienes 35 años".</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution5')">Ver solución</button>
+        <div id="solution5" class="solution">
+            <pre>saludo :: String -> Int -> String
+saludo x y = "Hola " ++ x ++ ", tienes " ++ show y ++ " años"</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>6. Mostrar valor booleano (con show)</h3>
+        <p>📝 Enunciado: Crea una función <code>mensaje</code> que reciba un valor booleano y diga "¿Está activo? True" o "¿Está activo? False".</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution6')">Ver solución</button>
+        <div id="solution6" class="solution">
+            <pre>mensaje :: Bool -> String
+mensaje b = "¿Está activo? " ++ show b</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>7. Estado del alumno con nota</h3>
+        <p>📝 Enunciado: Escribe una función <code>estadoAlumno</code> que reciba un nombre y una nota (Float) y diga "María obtuvo 4.5 en el examen".</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution7')">Ver solución</button>
+        <div id="solution7" class="solution">
+            <pre>estadoAlumno :: String -> Float -> String
+estadoAlumno nombre nota = nombre ++ " obtuvo " ++ show nota ++ " en el examen"</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>8. Evaluar si aprueba con if-then-else</h3>
+        <p>📝 Enunciado: Crea una función <code>evaluarnota</code> que reciba una nota (Float) y devuelva True si es mayor o igual a 3.0, False si no.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution8')">Ver solución</button>
+        <div id="solution8" class="solution">
+            <pre>evaluarnota :: Float -> Bool
+evaluarnota nota = if nota >= 3.0 then True else False</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>9. Evaluar si aprueba con guardas</h3>
+        <p>📝 Enunciado: Reescribe la función <code>evaluarnota</code> usando guardas en lugar de if-then-else.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution9')">Ver solución</button>
+        <div id="solution9" class="solution">
+            <pre>evaluarnota :: Float -> Bool
+evaluarnota nota
+  | nota >= 3.0 = True
+  | otherwise = False</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>10. Evaluación con 3 niveles de resultado</h3>
+        <p>📝 Enunciado: Crea una función <code>evaluar</code> que reciba una nota (Float) y devuelva:
+        <ul>
+            <li>"Excelente" si la nota es mayor o igual a 4.5</li>
+            <li>"Aprobó" si es mayor o igual a 3.0</li>
+            <li>"Reprobó" en cualquier otro caso</li>
+        </ul></p>
+        <button class="solution-toggle" onclick="toggleSolution('solution10')">Ver solución</button>
+        <div id="solution10" class="solution">
+            <pre>evaluar :: Float -> String
+evaluar nota
+  | nota >= 4.5 = "Excelente"
+  | nota >= 3.0 = "Aprobó"
+  | otherwise = "Reprobó"</pre>
+        </div>
+    </div>
+
+    <script>
+        function toggleSolution(id) {
+            const solution = document.getElementById(id);
+            if (solution.style.display === "none" || solution.style.display === "") {
+                solution.style.display = "block";
+            } else {
+                solution.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
