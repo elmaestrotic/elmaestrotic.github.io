@@ -233,13 +233,15 @@
                 <div class="submenu" id="submenu-clase3">
                     <a href="#" onclick="loadContent('clase3', 'memorias')">Memorias Profe</a>
                     <a href="#" onclick="loadContent('clase3', 'notas')">Notas Estudiantes</a>
-                </div>
+                </ Complexes
             </li>
             <li>
                 <a href="#" onclick="toggleSubmenu('clase4')">Clase 4</a>
                 <div class="submenu" id="submenu-clase4">
                     <a href="#" onclick="loadContent('clase4', 'memorias')">Memorias Profe</a>
-                    <a href="#" onclick="loadContent('clase4', 'notas')">Notas Estudiantes</a>
+                    <a href="#" onclick="loadContent('clase4', 'test1')">Test 1</a>
+                    <a href="#" onclick="loadContent('clase4', 'test2')">Test 2</a>
+                    <a href="#" onclick="loadContent('clase4', 'test3')">Test 3</a>
                 </div>
             </li>
             <li>
@@ -379,6 +381,12 @@
             src = 'notasclase2.html';
         } else if (clase === 'clase3' && type === 'memorias') {
             src = 'clase3.html';
+        } else if (clase === 'clase4' && type === 'test1') {
+            src = 'test1.html';
+        } else if (clase === 'clase4' && type === 'test2') {
+            src = 'test2.html';
+        } else if (clase === 'clase4' && type === 'test3') {
+            src = 'test3.html';
         } else {
             src = `${type}_${clase}.html`;
         }
@@ -397,7 +405,7 @@
                 }
             }, 100);
         } else {
-            contentArea.innerHTML = `<p>El contenido para ${clase.replace('clase', 'Clase ')} (${type === 'memorias' ? 'Memorias Profe' : 'Notas Estudiantes'}) aún no está disponible. Selecciona otra clase o regresa pronto.</p>`;
+            contentArea.innerHTML = `<p>El contenido para ${clase.replace('clase', 'Clase ')} (${type === 'memorias' ? 'Memorias Profe' : type === 'notas' ? 'Notas Estudiantes' : type}) aún no está disponible. Selecciona otra clase o regresa pronto.</p>`;
         }
     }
 

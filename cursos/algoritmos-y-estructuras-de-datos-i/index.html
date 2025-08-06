@@ -52,6 +52,9 @@
             padding: 0;
             margin: 0;
         }
+        .sidebar ul li {
+            position: relative;
+        }
         .sidebar ul li a {
             color: #ecf0f1;
             text-decoration: none;
@@ -73,6 +76,18 @@
         }
         .sidebar.collapsed ul li a span {
             display: none;
+        }
+        .sidebar ul ul {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 100%;
+            width: 16rem;
+            background-color: var(--sidebar-bg, #2c3e50);
+            padding-top: 0;
+        }
+        .sidebar ul li:hover > ul {
+            display: block;
         }
         .home-icon {
             display: flex;
@@ -131,7 +146,7 @@
             margin-bottom: 20px;
         }
         .course-header h1 {
-            font-family: 'Playfair Display', serif;
+            font-family: 'Playfair+Display', serif;
             font-size: 2.5rem;
             color: var(--primary-color, #2c3e50);
             margin: 0;
@@ -206,7 +221,14 @@
             <li><a href="#" class="active" onclick="loadContent('clase1')">Clase 1</a></li>
             <li><a href="#" onclick="loadContent('clase2')">Clase 2</a></li>
             <li><a href="#" onclick="loadContent('clase3')">Clase 3</a></li>
-            <li><a href="#" onclick="loadContent('clase4')">Clase 4</a></li>
+            <li>
+                <a href="#" onclick="loadContent('clase4')">Clase 4</a>
+                <ul>
+                    <li><a href="#" onclick="loadContent('clase4_memorias')">memorias docente</a></li>
+                    <li><a href="#" onclick="loadContent('clase4_test1')">Test 1</a></li>
+                    <li><a href="#" onclick="loadContent('clase4_test2')">Test 2</a></li>
+                </ul>
+            </li>
             <li><a href="#" onclick="loadContent('clase5')">Clase 5</a></li>
             <li><a href="#" onclick="loadContent('clase6')">Clase 6</a></li>
             <li><a href="#" onclick="loadContent('clase7')">Clase 7</a></li>
@@ -239,74 +261,41 @@
         links.forEach(link => link.classList.remove('active'));
         document.querySelector(`.sidebar a[onclick="loadContent('${clase}')"]`)?.classList.add('active');
 
+        let fileName;
         if (clase === 'clase1') {
-            contentArea.innerHTML = '<iframe src="Operaciones con Arrays Estáticos en C++.html" id="contentFrame"></iframe>';
-            setTimeout(() => {
-                const iframe = document.getElementById('contentFrame');
-                if (iframe) {
-                    iframe.onload = function() {
-                        const doc = iframe.contentDocument || iframe.contentWindow.document;
-                        const body = doc.body;
-                        const height = Math.max(body.scrollHeight, contentArea.clientHeight);
-                        iframe.style.height = height + 'px';
-                    };
-                }
-            }, 100);
+            fileName = 'Operaciones con Arrays Estáticos en C++.html';
         } else if (clase === 'clase2') {
-            contentArea.innerHTML = '<iframe src="clase2.html" id="contentFrame"></iframe>';
-            setTimeout(() => {
-                const iframe = document.getElementById('contentFrame');
-                if (iframe) {
-                    iframe.onload = function() {
-                        const doc = iframe.contentDocument || iframe.contentWindow.document;
-                        const body = doc.body;
-                        const height = Math.max(body.scrollHeight, contentArea.clientHeight);
-                        iframe.style.height = height + 'px';
-                    };
-                }
-            }, 100);
+            fileName = 'clase2.html';
         } else if (clase === 'clase3') {
-            contentArea.innerHTML = '<iframe src="clase3.html" id="contentFrame"></iframe>';
-            setTimeout(() => {
-                const iframe = document.getElementById('contentFrame');
-                if (iframe) {
-                    iframe.onload = function() {
-                        const doc = iframe.contentDocument || iframe.contentWindow.document;
-                        const body = doc.body;
-                        const height = Math.max(body.scrollHeight, contentArea.clientHeight);
-                        iframe.style.height = height + 'px';
-                    };
-                }
-            }, 100);
-        } else if (clase === 'clase4' || clase === 'clase5' || clase === 'clase6' || clase === 'clase7' || clase === 'clase8' || clase === 'clase9' || clase === 'clase10' || clase === 'clase11' || clase === 'clase12' || clase === 'clase13' || clase === 'clase14' || clase === 'clase15' || clase === 'clase16' || clase === 'clase17') {
-            contentArea.innerHTML = '<iframe src="' + clase + '.html" id="contentFrame"></iframe>';
-            setTimeout(() => {
-                const iframe = document.getElementById('contentFrame');
-                if (iframe) {
-                    iframe.onload = function() {
-                        const doc = iframe.contentDocument || iframe.contentWindow.document;
-                        const body = doc.body;
-                        const height = Math.max(body.scrollHeight, contentArea.clientHeight);
-                        iframe.style.height = height + 'px';
-                    };
-                }
-            }, 100);
-        } else if (clase === 'clase3') {
-            contentArea.innerHTML = '<iframe src="clase3.html" id="contentFrame"></iframe>';
-            setTimeout(() => {
-                const iframe = document.getElementById('contentFrame');
-                if (iframe) {
-                    iframe.onload = function() {
-                        const doc = iframe.contentDocument || iframe.contentWindow.document;
-                        const body = doc.body;
-                        const height = body.scrollHeight;
-                        iframe.style.height = height + 'px';
-                    };
-                }
-            }, 100);
+            fileName = 'clase3.html';
+        } else if (clase === 'clase4_memorias') {
+            fileName = 'clase4_modal.html';
+        } else if (clase >= 'clase5' && clase <= 'clase17') {
+            fileName = `${clase}.html`;
+        } else if (clase === 'clase4_test1' || clase === 'clase4_test2') {
+            fileName = `${clase}.html`; // Placeholder, reemplaza con los archivos reales de los tests si los tienes
         } else {
-            contentArea.innerHTML = `<p>El contenido para ${clase.replace('clase', 'Clase ')} aún no está disponible. Selecciona otra clase o regresa pronto.</p>`;
+            contentArea.innerHTML = `<p>El contenido para ${clase.replace('clase', 'Clase ').replace('_memorias', ' memorias ').replace('_test', ' Test ')} aún no está disponible. Selecciona otra clase o regresa pronto.</p>`;
+            return;
         }
+
+        contentArea.innerHTML = `<iframe src="${fileName}" id="contentFrame"></iframe>`;
+        setTimeout(() => {
+            const iframe = document.getElementById('contentFrame');
+            if (iframe) {
+                iframe.onload = function() {
+                    console.log(`Iframe cargado: ${fileName}`);
+                    const doc = iframe.contentDocument || iframe.contentWindow.document;
+                    const body = doc.body;
+                    const height = Math.max(body.scrollHeight, contentArea.clientHeight);
+                    iframe.style.height = height + 'px';
+                };
+                iframe.onerror = function() {
+                    console.error(`Error 404: No se pudo cargar ${fileName}. Verifica la ruta o el archivo.`);
+                    contentArea.innerHTML = `<p>Error 404: El archivo ${fileName} no se encontró. Verifica la ruta o contacta al soporte.</p>`;
+                };
+            }
+        }, 100);
     }
 
     function setTheme(color, hover) {

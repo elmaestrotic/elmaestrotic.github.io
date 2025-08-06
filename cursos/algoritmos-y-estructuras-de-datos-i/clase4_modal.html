@@ -1,0 +1,573 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algoritmos de Ordenamiento - Clase 4 por Alexander Narváez</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: white;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 20px;
+        }
+
+        .author {
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1em;
+        }
+
+        .algorithm-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 900px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 30px;
+            color: #333;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close:hover {
+            color: #e53e3e;
+        }
+
+        .code-example {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 25px;
+            border-radius: 12px;
+            font-family: 'Fira Code', 'Cascadia Code', 'JetBrains Mono', 'Source Code Pro', 'Consolas', monospace;
+            margin: 20px 0;
+            overflow-x: auto;
+            border-left: 4px solid #4299e1;
+            font-size: 14px;
+            line-height: 1.6;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            white-space: pre;
+        }
+
+        .code-example .keyword {
+            color: #c792ea;
+            font-weight: bold;
+        }
+
+        .code-example .string {
+            color: #c3e88d;
+        }
+
+        .code-example .comment {
+            color: #546e7a;
+            font-style: italic;
+        }
+
+        .code-example .type {
+            color: #82aaff;
+        }
+
+        .code-example .function {
+            color: #ffcb6b;
+        }
+
+        .code-example .number {
+            color: #f78c6c;
+        }
+
+        .code-example .operator {
+            color: #89ddff;
+        }
+
+        .code-example .preprocessor {
+            color: #c792ea;
+        }
+
+        .animation-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .visual-section {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .visual-section h3 {
+            color: #4a5568;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .algorithm-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🔍 Algoritmos de Ordenamiento</h1>
+            <p>Selecciona un algoritmo para ver su código y animación</p>
+            <div class="author">Por Alexander Narváez</div>
+        </header>
+
+        <div class="algorithm-buttons">
+            <button class="btn" onclick="openModal('bubble-sort')">Bubble Sort</button>
+            <button class="btn" onclick="openModal('insertion-sort')">Insertion Sort</button>
+            <button class="btn" onclick="openModal('selection-sort')">Selection Sort</button>
+        </div>
+
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h2 id="modal-title"></h2>
+                <p id="modal-description"></p>
+                <h4>🔄 Proceso:</h4>
+                <ul id="modal-process"></ul>
+                <div id="modal-code" class="code-example"></div>
+                <div class="visual-section">
+                    <h3>🎨 Visualización Interactiva</h3>
+                    <div class="animation-container">
+                        <div id="modal-canvas"></div>
+                    </div>
+                    <div>
+                        <button class="btn" id="reset-btn">Reiniciar</button>
+                        <button class="btn" id="start-btn">Iniciar Animación</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentAlgorithm = '';
+        let sortArray = [64, 34, 25, 12, 22, 11, 90];
+        let sortState = {};
+        let isAnimating = false;
+        let sketch = null;
+
+        const algorithmData = {
+            'bubble-sort': {
+                title: 'Bubble Sort',
+                description: '<span class="highlight">Bubble Sort</span> es un algoritmo de ordenamiento simple que compara repetidamente pares de elementos adyacentes y los intercambia si están en el orden incorrecto, haciendo que los elementos más grandes "floten" hacia el final.',
+                process: [
+                    'Recorre el arreglo múltiples veces.',
+                    'En cada iteración, compara elementos adyacentes y los intercambia si están desordenados.',
+                    'Los elementos más grandes se mueven al final en cada pasada.'
+                ],
+                code: `#include <vector>
+using namespace std;
+
+void bubbleSort(vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                // Intercambiar elementos
+                int temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+    }
+}`,
+                state: { i: 0, j: 0, done: false }
+            },
+            'insertion-sort': {
+                title: 'Insertion Sort',
+                description: '<span class="highlight">Insertion Sort</span> construye el arreglo ordenado de a un elemento por vez, insertando cada elemento en su posición correcta dentro de la porción ya ordenada del arreglo.',
+                process: [
+                    'Considera el primer elemento como ordenado.',
+                    'Toma el siguiente elemento y lo inserta en la posición correcta en la parte ordenada.',
+                    'Repite hasta que todos los elementos estén ordenados.'
+                ],
+                code: `#include <vector>
+using namespace std;
+
+void insertionSort(vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 1; i < n; i++) {
+        int key = arr[i];
+        int j = i - 1;
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+}`,
+                state: { i: 1, j: 0, key: 0, done: false }
+            },
+            'selection-sort': {
+                title: 'Selection Sort',
+                description: '<span class="highlight">Selection Sort</span> divide el arreglo en una parte ordenada y otra desordenada, seleccionando repetidamente el elemento más pequeño de la parte desordenada y colocándolo al final de la parte ordenada.',
+                process: [
+                    'Encuentra el elemento mínimo en la parte desordenada.',
+                    'Intercambia el elemento mínimo con el primer elemento de la parte desordenada.',
+                    'Amplía la parte ordenada y repite.'
+                ],
+                code: `#include <vector>
+using namespace std;
+
+void selectionSort(vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 0; i < n - 1; i++) {
+        int minIdx = i;
+        for (int j = i + 1; j < n; j++) {
+            if (arr[j] < arr[minIdx]) {
+                minIdx = j;
+            }
+        }
+        if (minIdx != i) {
+            int temp = arr[i];
+            arr[i] = arr[minIdx];
+            arr[minIdx] = temp;
+        }
+    }
+}`,
+                state: { i: 0, minIdx: 0, j: 0, done: false }
+            }
+        };
+
+        function openModal(algorithm) {
+            console.log('Opening modal for:', algorithm);
+            currentAlgorithm = algorithm;
+            sortArray = [64, 34, 25, 12, 22, 11, 90];
+            sortState = { ...algorithmData[algorithm].state };
+            isAnimating = false;
+
+            // Update modal content
+            document.getElementById('modal-title').innerHTML = algorithmData[algorithm].title;
+            document.getElementById('modal-description').innerHTML = algorithmData[algorithm].description;
+            const processList = document.getElementById('modal-process');
+            processList.innerHTML = '';
+            algorithmData[algorithm].process.forEach(step => {
+                const li = document.createElement('li');
+                li.textContent = step;
+                processList.appendChild(li);
+            });
+            const codeElement = document.getElementById('modal-code');
+            codeElement.innerHTML = algorithmData[algorithm].code
+                .replace(/#include/g, '<span class="preprocessor">#include</span>')
+                .replace(/(void|int|for|if|while|using namespace std)/g, '<span class="keyword">$1</span>')
+                .replace(/(&lt;vector&gt;|&lt;.*&gt;)/g, '<span class="string">$1</span>')
+                .replace(/(bubbleSort|insertionSort|selectionSort)/g, '<span class="function">$1</span>')
+                .replace(/(\d+)/g, '<span class="number">$1</span>')
+                .replace(/(=|\+|-|&gt;|&lt;|\+\+|--|&amp;&amp;)/g, '<span class="operator">$1</span>')
+                .replace(/(vector|int|std)/g, '<span class="type">$1</span>')
+                .replace(/(\/\/.*)/g, '<span class="comment">$1</span>');
+
+            // Remove existing canvas
+            if (sketch) {
+                sketch.remove();
+                sketch = null;
+            }
+            document.getElementById('modal-canvas').innerHTML = '';
+
+            // Setup new canvas
+            setupAnimation();
+
+            // Setup button listeners
+            const resetBtn = document.getElementById('reset-btn');
+            const startBtn = document.getElementById('start-btn');
+            resetBtn.onclick = resetAnimation;
+            startBtn.onclick = startAnimation;
+
+            // Show modal
+            document.getElementById('modal').classList.add('active');
+        }
+
+        function closeModal() {
+            console.log('Closing modal');
+            document.getElementById('modal').classList.remove('active');
+            if (sketch) {
+                sketch.remove();
+                sketch = null;
+            }
+            isAnimating = false;
+        }
+
+        function drawBars(sketch, arr, highlight1 = -1, highlight2 = -1, sorted = []) {
+            sketch.background(255);
+            let barWidth = sketch.width / arr.length;
+            for (let i = 0; i < arr.length; i++) {
+                let color = [100, 100, 255]; // Blue
+                if (i === highlight1 || i === highlight2) {
+                    color = [255, 100, 100]; // Red
+                } else if (sorted.includes(i)) {
+                    color = [100, 255, 100]; // Green
+                }
+                sketch.fill(color);
+                sketch.noStroke();
+                sketch.rect(i * barWidth, sketch.height - arr[i] * 4, barWidth - 2, arr[i] * 4);
+                sketch.fill(0);
+                sketch.textAlign(sketch.CENTER);
+                sketch.text(arr[i], i * barWidth + barWidth / 2, sketch.height - arr[i] * 4 - 10);
+            }
+        }
+
+        function setupAnimation() {
+            sketch = new p5(function(s) {
+                s.setup = function() {
+                    let canvas = s.createCanvas(600, 400);
+                    canvas.parent('modal-canvas');
+                    s.frameRate(10);
+                };
+
+                s.draw = function() {
+                    if (currentAlgorithm === 'bubble-sort') {
+                        drawBars(s, sortArray, sortState.j, sortState.j + 1, 
+                            sortState.done ? Array.from({length: sortArray.length}, (_, i) => i) : 
+                            Array.from({length: sortArray.length - sortState.i - 1}, (_, k) => sortArray.length - 1 - k));
+                        if (!sortState.done && isAnimating) {
+                            if (sortState.j < sortArray.length - sortState.i - 1) {
+                                if (sortArray[sortState.j] > sortArray[sortState.j + 1]) {
+                                    let temp = sortArray[sortState.j];
+                                    sortArray[sortState.j] = sortArray[sortArray.j + 1];
+                                    sortArray[sortArray.j + 1] = temp;
+                                }
+                                sortState.j++;
+                            } else {
+                                sortState.i++;
+                                sortState.j = 0;
+                                if (sortState.i >= sortArray.length - 1) {
+                                    sortState.done = true;
+                                    isAnimating = false;
+                                }
+                            }
+                        }
+                    } else if (currentAlgorithm === 'insertion-sort') {
+                        let sorted = Array.from({length: sortState.i}, (_, k) => k);
+                        drawBars(s, sortArray, sortState.j, sortState.i, sorted);
+                        if (!sortState.done && isAnimating) {
+                            if (sortState.i < sortArray.length) {
+                                if (sortState.j >= 0 && sortArray[sortState.j] > sortState.key) {
+                                    sortArray[sortState.j + 1] = sortArray[sortState.j];
+                                    sortState.j--;
+                                } else {
+                                    sortArray[sortState.j + 1] = sortState.key;
+                                    sortState.i++;
+                                    if (sortState.i < sortArray.length) {
+                                        sortState.key = sortArray[sortState.i];
+                                        sortState.j = sortState.i - 1;
+                                    } else {
+                                        sortState.done = true;
+                                        isAnimating = false;
+                                    }
+                                }
+                            }
+                        }
+                    } else if (currentAlgorithm === 'selection-sort') {
+                        let sorted = Array.from({length: sortState.i}, (_, k) => k);
+                        drawBars(s, sortArray, sortState.j, sortState.minIdx, sorted);
+                        if (!sortState.done && isAnimating) {
+                            if (sortState.i < sortArray.length - 1) {
+                                if (sortState.j < sortArray.length) {
+                                    if (sortArray[sortState.j] < sortArray[sortState.minIdx]) {
+                                        sortState.minIdx = sortState.j;
+                                    }
+                                    sortState.j++;
+                                } else {
+                                    if (sortState.minIdx !== sortState.i) {
+                                        let temp = sortArray[sortState.i];
+                                        sortArray[sortState.i] = sortArray[sortState.minIdx];
+                                        sortArray[sortState.minIdx] = temp;
+                                    }
+                                    sortState.i++;
+                                    sortState.j = sortState.i + 1;
+                                    sortState.minIdx = sortState.i;
+                                    if (sortState.i >= sortArray.length - 1) {
+                                        sortState.done = true;
+                                        isAnimating = false;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                };
+            }, document.getElementById('modal-canvas'));
+        }
+
+        function startAnimation() {
+            console.log('Starting animation for:', currentAlgorithm);
+            if (!isAnimating) {
+                isAnimating = true;
+                if (currentAlgorithm === 'insertion-sort') {
+                    sortState.key = sortArray[sortState.i];
+                    sortState.j = sortState.i - 1;
+                } else if (currentAlgorithm === 'selection-sort') {
+                    sortState.j = sortState.i + 1;
+                    sortState.minIdx = sortState.i;
+                }
+            }
+        }
+
+        function resetAnimation() {
+            console.log('Resetting animation for:', currentAlgorithm);
+            sortArray = [64, 34, 25, 12, 22, 11, 90];
+            sortState = { ...algorithmData[currentAlgorithm].state };
+            isAnimating = false;
+            if (sketch) {
+                sketch.remove();
+                sketch = null;
+            }
+            document.getElementById('modal-canvas').innerHTML = '';
+            setupAnimation();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded');
+        });
+    </script>
+</body>
+</html>

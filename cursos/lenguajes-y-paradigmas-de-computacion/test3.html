@@ -1,0 +1,212 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicios Avanzados de Listas en Haskell</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .exercise {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .solution {
+            display: none;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-left: 3px solid #4CAF50;
+            margin-top: 10px;
+        }
+        .solution-toggle {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        .solution-toggle:hover {
+            background-color: #45a049;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ejercicios Avanzados de Listas en Haskell - Enunciado y Solución</h1>
+
+    <div class="exercise">
+        <h3>1. Construir una lista con cons</h3>
+        <p>📝 Enunciado: Crea una función <code>construirLista</code> que tome un entero <code>n</code> y construya una lista con los números de 1 a <code>n</code> usando el operador cons (<code>:</code>).</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution1')">Ver solución</button>
+        <div id="solution1" class="solution">
+            <pre>construirLista :: Int -> [Int]
+construirLista n = go n []
+  where
+    go 0 xs = xs
+    go n xs = go (n-1) (n : xs)</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>2. Extraer elemento por índice</h3>
+        <p>📝 Enunciado: Escribe una función <code>obtenerElemento</code> que use el operador <code>!!</code> para devolver el elemento en la posición <code>n</code> de una lista de enteros. Maneja el caso de índice inválido devolviendo <code>Nothing</code>.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution2')">Ver solución</button>
+        <div id="solution2" class="solution">
+            <pre>obtenerElemento :: [Int] -> Int -> Maybe Int
+obtenerElemento xs n
+  | n < 0 || n >= length xs = Nothing
+  | otherwise = Just (xs !! n)</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>3. Verificar pertenencia</h3>
+        <p>📝 Enunciado: Crea una función <code>contiene</code> que use <code>elem</code> para verificar si un carácter dado está en una lista de caracteres y devuelva un mensaje como "El carácter 'a' está en la lista".</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution3')">Ver solución</button>
+        <div id="solution3" class="solution">
+            <pre>contiene :: Char -> [Char] -> String
+contiene c xs
+  | elem c xs = "El carácter '" ++ [c] ++ "' está en la lista"
+  | otherwise = "El carácter '" ++ [c] ++ "' no está en la lista"</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>4. Tomar primeros elementos</h3>
+        <p>📝 Enunciado: Escribe una función <code>tomarN</code> que use <code>take</code> para devolver los primeros <code>n</code> elementos de una lista de cadenas. Si <code>n</code> es mayor que la longitud de la lista, devuelve la lista completa.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution4')">Ver solución</button>
+        <div id="solution4" class="solution">
+            <pre>tomarN :: Int -> [String] -> [String]
+tomarN n xs = take n xs</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>5. Eliminar primeros elementos</h3>
+        <p>📝 Enunciado: Crea una función <code>descartarN</code> que use <code>drop</code> para eliminar los primeros <code>n</code> elementos de una lista de enteros. Si <code>n</code> es mayor que la longitud de la lista, devuelve una lista vacía.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution5')">Ver solución</button>
+        <div id="solution5" class="solution">
+            <pre>descartarN :: Int -> [Int] -> [Int]
+descartarN n xs = drop n xs</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>6. Combinar listas en pares</h3>
+        <p>📝 Enunciado: Escribe una función <code>combinarListas</code> que use <code>zip</code> para combinar dos listas (una de enteros y otra de cadenas) en una lista de tuplas. Devuelve una lista vacía si alguna de las listas está vacía.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution6')">Ver solución</button>
+        <div id="solution6" class="solution">
+            <pre>combinarListas :: [Int] -> [String] -> [(Int, String)]
+combinarListas xs ys
+  | null xs || null ys = []
+  | otherwise = zip xs ys</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>7. Longitud de una lista</h3>
+        <p>📝 Enunciado: Crea una función <code>longitudLista</code> que use <code>length</code> para devolver un mensaje como "La lista tiene 5 elementos" para una lista de cualquier tipo.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution7')">Ver solución</button>
+        <div id="solution7" class="solution">
+            <pre>longitudLista :: [a] -> String
+longitudLista xs = "La lista tiene " ++ show (length xs) ++ " elementos"</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>8. Invertir una lista</h3>
+        <p>📝 Enunciado: Escribe una función <code>invertirLista</code> que use <code>reverse</code> para invertir una lista de flotantes y devuelva un mensaje indicando si la lista invertida es igual a la original (para verificar palíndromos).</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution8')">Ver solución</button>
+        <div id="solution8" class="solution">
+            <pre>invertirLista :: [Float] -> String
+invertirLista xs
+  | xs == reverse xs = "La lista invertida es igual a la original: " ++ show (reverse xs)
+  | otherwise = "La lista invertida es: " ++ show (reverse xs)</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>9. Ciclo de lista</h3>
+        <p>📝 Enunciado: Crea una función <code>cicloN</code> que use <code>cycle</code> y <code>take</code> para generar una lista con los primeros <code>n</code> elementos de una lista cíclica basada en una lista de entrada de enteros.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution9')">Ver solución</button>
+        <div id="solution9" class="solution">
+            <pre>cicloN :: Int -> [Int] -> [Int]
+cicloN n xs
+  | null xs = []
+  | otherwise = take n (cycle xs)</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>10. Aplicación parcial con cons</h3>
+        <p>📝 Enunciado: Escribe una función <code>agregarPrefijo</code> que use aplicación parcial con el operador cons (<code>:</code>) para agregar un prefijo fijo (por ejemplo, 0) a una lista de enteros, y devuelva la lista resultante.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution10')">Ver solución</button>
+        <div id="solution10" class="solution">
+            <pre>agregarPrefijo :: [Int] -> [Int]
+agregarPrefijo = (0:)</pre>
+        </div>
+    </div>
+
+    <script>
+        function toggleSolution(id) {
+            const solution = document.getElementById(id);
+            if (solution.style.display === "none" || solution.style.display === "") {
+                solution.style.display = "block";
+            } else {
+                solution.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>

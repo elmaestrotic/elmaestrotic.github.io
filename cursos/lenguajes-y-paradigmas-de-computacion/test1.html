@@ -1,0 +1,337 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicios de Expresiones Lambda en Java</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .exercise {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .solution {
+            display: none;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-left: 3px solid #4CAF50;
+            margin-top: 10px;
+        }
+        .solution-toggle {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        .solution-toggle:hover {
+            background-color: #45a049;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ejercicios de Expresiones Lambda en Java</h1>
+
+    <div class="exercise">
+        <h3>1. ¿Cuál es el operador lambda?</h3>
+        <p>📝 Enunciado: Identifique el operador utilizado para definir una expresión lambda en Java.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution1')">Ver solución</button>
+        <div id="solution1" class="solution">
+            <p>El operador lambda es <code>-></code>.</p>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>2. ¿Qué es una interfaz funcional?</h3>
+        <p>📝 Enunciado: Defina qué es una interfaz funcional en el contexto de Java.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution2')">Ver solución</button>
+        <div id="solution2" class="solution">
+            <p>Es una interfaz que contiene un único método abstracto.</p>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>3. ¿Cómo se relacionan las interfaces funcionales y las expresiones lambda?</h3>
+        <p>📝 Enunciado: Explique la relación entre las interfaces funcionales y las expresiones lambda en Java.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution3')">Ver solución</button>
+        <div id="solution3" class="solution">
+            <p>Las expresiones lambda proporcionan una implementación del método abstracto definido por la interfaz funcional. La interfaz funcional define el tipo de destino para la lambda.</p>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>4. ¿Cuáles son los dos tipos generales de expresiones lambda?</h3>
+        <p>📝 Enunciado: Identifique los dos tipos principales de expresiones lambda en Java y describa sus características.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution4')">Ver solución</button>
+        <div id="solution4" class="solution">
+            <p>Los dos tipos son:</p>
+            <ul>
+                <li><b>Lambdas de expresión</b>: Especifican una única expresión cuyo valor se devuelve.</li>
+                <li><b>Lambdas de bloque</b>: Contienen un bloque de código y su valor se especifica con una instrucción <code>return</code>.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>5. Expresión lambda para rango</h3>
+        <p>📝 Enunciado: Muestre una expresión lambda que devuelva <code>true</code> si un número está entre 10 y 20, inclusive.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution5')">Ver solución</button>
+        <div id="solution5" class="solution">
+            <pre>
+interface MyTest {
+    boolean testing(int n);
+}
+MyTest inRange = n -> n >= 10 && n <= 20;
+System.out.println("¿15 está en rango? " + inRange.testing(15)); // true
+System.out.println("¿5 está en rango? " + inRange.testing(5));   // false
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>6. Interfaz funcional para lambda</h3>
+        <p>📝 Enunciado: Cree una interfaz funcional llamada <code>MyTest</code> con un método abstracto <code>testing()</code> que admita la expresión lambda creada en la pregunta anterior.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution6')">Ver solución</button>
+        <div id="solution6" class="solution">
+            <pre>
+interface MyTest {
+    boolean testing(int n);
+}
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>7. Lambda de bloque para factorial</h3>
+        <p>📝 Enunciado: Cree una lambda de bloque que calcule la factorial de un entero usando la interfaz <code>NumericFunc</code>. Demuestre su uso.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution7')">Ver solución</button>
+        <div id="solution7" class="solution">
+            <pre>
+interface NumericFunc {
+    int func(int n);
+}
+public class Main {
+    public static void main(String[] args) {
+        NumericFunc factorial = n -> {
+            int result = 1;
+            for (int i = 1; i <= n; i++) {
+                result *= i;
+            }
+            return result;
+        };
+        System.out.println("El factorial de 5 es: " + factorial.func(5)); // 120
+    }
+}
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>8. Interfaz funcional genérica</h3>
+        <p>📝 Enunciado: Diseñe una interfaz funcional genérica <code>MyFunc<T></code> con un método <code>func()</code> que retorne un tipo <code>T</code> y acepte un parámetro de tipo <code>T</code>.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution8')">Ver solución</button>
+        <div id="solution8" class="solution">
+            <pre>
+interface MyFunc<T> {
+    T func(T n);
+}
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>9. Lambda para eliminar espacios</h3>
+        <p>📝 Enunciado: Cree una lambda que elimine todos los espacios de una cadena y devuelva el resultado. Demuestre su uso con la interfaz <code>StringFunc</code>.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution9')">Ver solución</button>
+        <div id="solution9" class="solution">
+            <pre>
+interface StringFunc {
+    String changeStr(String s);
+}
+public class Main {
+    public static void main(String[] args) {
+        StringFunc removeSpaces = s -> s.replaceAll("\\s", "");
+        System.out.println("Resultado: " + removeSpaces.changeStr("Hola Mundo")); // HolaMundo
+    }
+}
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>10. Variables locales en lambdas</h3>
+        <p>📝 Enunciado: ¿Puede una expresión lambda usar una variable local? En caso afirmativo, ¿qué restricción debe cumplir?</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution10')">Ver solución</button>
+        <div id="solution10" class="solution">
+            <p>Sí, una expresión lambda puede usar una variable local siempre que sea <b>efectivamente final</b> (es decir, su valor no cambia después de su inicialización).</p>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>11. Excepciones en lambdas</h3>
+        <p>📝 Enunciado: Si una expresión lambda genera una excepción comprobada, ¿debe el método abstracto de la interfaz funcional incluir una cláusula <code>throws</code>? ¿Verdadero o falso?</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution11')">Ver solución</button>
+        <div id="solution11" class="solution">
+            <p>Verdadero. Si una lambda genera una excepción comprobada, el método abstracto de la interfaz funcional debe declarar esa excepción con una cláusula <code>throws</code>.</p>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>12. ¿Qué es una referencia de método?</h3>
+        <p>📝 Enunciado: Defina qué es una referencia de método en Java.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution12')">Ver solución</button>
+        <div id="solution12" class="solution">
+            <p>Es una forma de hacer referencia a un método sin ejecutarlo, permitiendo usarlo como una instancia de una interfaz funcional.</p>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>13. Instancia de interfaz funcional</h3>
+        <p>📝 Enunciado: Explique qué ocurre al evaluar una referencia de método en el contexto de una interfaz funcional.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution13')">Ver solución</button>
+        <div id="solution13" class="solution">
+            <p>Al evaluarse, una referencia de método crea una instancia de la interfaz funcional proporcionada por su contexto de destino.</p>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>14. Referencia a método estático</h3>
+        <p>📝 Enunciado: Dada la clase <code>MyClass</code> con un método estático <code>myStaticMethod()</code>, indique cómo especificar una referencia de método a <code>myStaticMethod()</code>.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution14')">Ver solución</button>
+        <div id="solution14" class="solution">
+            <pre>
+class MyClass {
+    static void myStaticMethod() { System.out.println("Método estático"); }
+}
+interface MyFunc {
+    void func();
+}
+public class Main {
+    public static void main(String[] args) {
+        MyFunc ref = MyClass::myStaticMethod;
+        ref.func(); // Imprime: Método estático
+    }
+}
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>15. Referencia a método de instancia</h3>
+        <p>📝 Enunciado: Dada la clase <code>MyClass</code> con el método de instancia <code>myInstMethod()</code> y un objeto <code>mcObj</code> de <code>MyClass</code>, indique cómo crear una referencia a <code>myInstMethod()</code>.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution15')">Ver solución</button>
+        <div id="solution15" class="solution">
+            <pre>
+class MyClass {
+    void myInstMethod() { System.out.println("Método de instancia"); }
+}
+interface MyFunc {
+    void func();
+}
+public class Main {
+    public static void main(String[] args) {
+        MyClass mcObj = new MyClass();
+        MyFunc ref = mcObj::myInstMethod;
+        ref.func(); // Imprime: Método de instancia
+    }
+}
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>16. Referencia a constructor</h3>
+        <p>📝 Enunciado: Explique cómo se especifica una referencia de constructor en Java, usando <code>MyClass</code> como ejemplo.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution16')">Ver solución</button>
+        <div id="solution16" class="solution">
+            <pre>
+class MyClass {
+    MyClass() { System.out.println("Constructor llamado"); }
+}
+interface MyFunc {
+    MyClass create();
+}
+public class Main {
+    public static void main(String[] args) {
+        MyFunc ref = MyClass::new;
+        ref.create(); // Imprime: Constructor llamado
+    }
+}
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>17. Paquete de interfaces funcionales</h3>
+        <p>📝 Enunciado: ¿En qué paquete define Java varias interfaces funcionales predefinidas?</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution17')">Ver solución</button>
+        <div id="solution17" class="solution">
+            <p>En el paquete <code>java.util.function</code>.</p>
+        </div>
+    </div>
+
+    <script>
+        function toggleSolution(id) {
+            const solution = document.getElementById(id);
+            if (solution.style.display === "none" || solution.style.display === "") {
+                solution.style.display = "block";
+            } else {
+                solution.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
