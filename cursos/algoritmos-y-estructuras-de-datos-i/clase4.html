@@ -1,0 +1,787 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algoritmos de Ordenamiento - Clase 4 por Alexander Narváez</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: white;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 20px;
+        }
+
+        .author {
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1em;
+        }
+
+        .tab-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+            margin-bottom: 50px;
+        }
+
+        .tab-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border-radius: 10px;
+            background: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .code-example {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 25px;
+            border-radius: 12px;
+            font-family: 'Fira Code', 'Cascadia Code', 'JetBrains Mono', 'Source Code Pro', 'Consolas', monospace;
+            margin: 20px 0;
+            overflow-x: auto;
+            border-left: 4px solid #4299e1;
+            font-size: 14px;
+            line-height: 1.6;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            white-space: pre;
+        }
+
+        .code-example .keyword {
+            color: #c792ea;
+            font-weight: bold;
+        }
+
+        .code-example .string {
+            color: #c3e88d;
+        }
+
+        .code-example .comment {
+            color: #546e7a;
+            font-style: italic;
+        }
+
+        .code-example .type {
+            color: #82aaff;
+        }
+
+        .code-example .function {
+            color: #ffcb6b;
+        }
+
+        .code-example .number {
+            color: #f78c6c;
+        }
+
+        .code-example .operator {
+            color: #89ddff;
+        }
+
+        .code-example .preprocessor {
+            color: #c792ea;
+        }
+
+        .complexity-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .complexity-table th,
+        .complexity-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .complexity-table th {
+            background: #4a5568;
+            color: white;
+            font-weight: 600;
+        }
+
+        .complexity-table tr:hover {
+            background: #f7fafc;
+        }
+
+        .visual-section {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .visual-section h3 {
+            color: #4a5568;
+            margin-bottom: 20px;
+        }
+
+        .animation-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #a8e6cf 0%, #88d8a3 100%);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .tab-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .container {
+                padding: 10px;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.6s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header fade-in">
+            <h1>🔍 Algoritmos de Ordenamiento</h1>
+            <p>Bubble Sort, Insertion Sort y Selection Sort</p>
+            <div class="author">Por Alexander Narváez</div>
+        </header>
+
+        <div class="tab-container">
+            <div class="tab-buttons">
+                <button class="tab-button active" onclick="openTab('bubble-sort')">Bubble Sort</button>
+                <button class="tab-button" onclick="openTab('insertion-sort')">Insertion Sort</button>
+                <button class="tab-button" onclick="openTab('selection-sort')">Selection Sort</button>
+            </div>
+
+            <!-- Bubble Sort Tab -->
+            <div id="bubble-sort" class="tab-content active">
+                <h2>Bubble Sort</h2>
+                <p><span class="highlight">Bubble Sort</span> es un algoritmo de ordenamiento simple que compara repetidamente pares de elementos adyacentes y los intercambia si están en el orden incorrecto, haciendo que los elementos más grandes "floten" hacia el final.</p>
+
+                <h4>🔄 Proceso:</h4>
+                <ul>
+                    <li>Recorre el arreglo múltiples veces.</li>
+                    <li>En cada iteración, compara elementos adyacentes y los intercambia si están desordenados.</li>
+                    <li>Los elementos más grandes se mueven al final en cada pasada.</li>
+                </ul>
+
+                <div class="code-example">
+<span class="preprocessor">#include</span> <span class="string">&lt;vector&gt;</span>
+<span class="keyword">using namespace</span> <span class="type">std</span>;
+
+<span class="type">void</span> <span class="function">bubbleSort</span>(<span class="type">vector</span><span class="operator">&lt;</span><span class="type">int</span><span class="operator">&gt;</span><span class="operator">&amp;</span> arr) {
+    <span class="type">int</span> n <span class="operator">=</span> arr.<span class="function">size</span>();
+    <span class="keyword">for</span> (<span class="type">int</span> i <span class="operator">=</span> <span class="number">0</span>; i <span class="operator">&lt;</span> n <span class="operator">-</span> <span class="number">1</span>; i<span class="operator">++</span>) {
+        <span class="keyword">for</span> (<span class="type">int</span> j <span class="operator">=</span> <span class="number">0</span>; j <span class="operator">&lt;</span> n <span class="operator">-</span> i <span class="operator">-</span> <span class="number">1</span>; j<span class="operator">++</span>) {
+            <span class="keyword">if</span> (arr[j] <span class="operator">&gt;</span> arr[j <span class="operator">+</span> <span class="number">1</span>]) {
+                <span class="comment">// Intercambiar elementos</span>
+                <span class="type">int</span> temp <span class="operator">=</span> arr[j];
+                arr[j] <span class="operator">=</span> arr[j <span class="operator">+</span> <span class="number">1</span>];
+                arr[j <span class="operator">+</span> <span class="number">1</span>] <span class="operator">=</span> temp;
+            }
+        }
+    }
+}
+                </div>
+
+                <table class="complexity-table">
+                    <thead>
+                        <tr>
+                            <th>Caso</th>
+                            <th>Complejidad Temporal</th>
+                            <th>Complejidad Espacial</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Mejor</td>
+                            <td>O(n)</td>
+                            <td>O(1)</td>
+                        </tr>
+                        <tr>
+                            <td>Promedio</td>
+                            <td>O(n²)</td>
+                            <td>O(1)</td>
+                        </tr>
+                        <tr>
+                            <td>Peor</td>
+                            <td>O(n²)</td>
+                            <td>O(1)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="visual-section">
+                    <h3>🎨 Visualización Interactiva</h3>
+                    <div class="animation-container">
+                        <div id="bubble-sort-canvas"></div>
+                    </div>
+                    <div>
+                        <button class="btn" onclick="resetBubbleSort()">Reiniciar</button>
+                        <button class="btn" onclick="startBubbleSort()">Iniciar Animación</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insertion Sort Tab -->
+            <div id="insertion-sort" class="tab-content">
+                <h2>Insertion Sort</h2>
+                <p><span class="highlight">Insertion Sort</span> construye el arreglo ordenado de a un elemento por vez, insertando cada elemento en su posición correcta dentro de la porción ya ordenada del arreglo.</p>
+
+                <h4>🔄 Proceso:</h4>
+                <ul>
+                    <li>Considera el primer elemento como ordenado.</li>
+                    <li>Toma el siguiente elemento y lo inserta en la posición correcta en la parte ordenada.</li>
+                    <li>Repite hasta que todos los elementos estén ordenados.</li>
+                </ul>
+
+                <div class="code-example">
+<span class="preprocessor">#include</span> <span class="string">&lt;vector&gt;</span>
+<span class="keyword">using namespace</span> <span class="type">std</span>;
+
+<span class="type">void</span> <span class="function">insertionSort</span>(<span class="type">vector</span><span class="operator">&lt;</span><span class="type">int</span><span class="operator">&gt;</span><span class="operator">&amp;</span> arr) {
+    <span class="type">int</span> n <span class="operator">=</span> arr.<span class="function">size</span>();
+    <span class="keyword">for</span> (<span class="type">int</span> i <span class="operator">=</span> <span class="number">1</span>; i <span class="operator">&lt;</span> n; i<span class="operator">++</span>) {
+        <span class="type">int</span> key <span class="operator">=</span> arr[i];
+        <span class="type">int</span> j <span class="operator">=</span> i <span class="operator">-</span> <span class="number">1</span>;
+        <span class="keyword">while</span> (j <span class="operator">&gt;=</span> <span class="number">0</span> <span class="operator">&amp;&amp;</span> arr[j] <span class="operator">&gt;</span> key) {
+            arr[j <span class="operator">+</span> <span class="number">1</span>] <span class="operator">=</span> arr[j];
+            j<span class="operator">--</span>;
+        }
+        arr[j <span class="operator">+</span> <span class="number">1</span>] <span class="operator">=</span> key;
+    }
+}
+                </div>
+
+                <table class="complexity-table">
+                    <thead>
+                        <tr>
+                            <th>Caso</th>
+                            <th>Complejidad Temporal</th>
+                            <th>Complejidad Espacial</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Mejor</td>
+                            <td>O(n)</td>
+                            <td>O(1)</td>
+                        </tr>
+                        <tr>
+                            <td>Promedio</td>
+                            <td>O(n²)</td>
+                            <td>O(1)</td>
+                        </tr>
+                        <tr>
+                            <td>Peor</td>
+                            <td>O(n²)</td>
+                            <td>O(1)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="visual-section">
+                    <h3>🎨 Visualización Interactiva</h3>
+                    <div class="animation-container">
+                        <div id="insertion-sort-canvas"></div>
+                    </div>
+                    <div>
+                        <button class="btn" onclick="resetInsertionSort()">Reiniciar</button>
+                        <button class="btn" onclick="startInsertionSort()">Iniciar Animación</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Selection Sort Tab -->
+            <div id="selection-sort" class="tab-content">
+                <h2>Selection Sort</h2>
+                <p><span class="highlight">Selection Sort</span> divide el arreglo en una parte ordenada y otra desordenada, seleccionando repetidamente el elemento más pequeño de la parte desordenada y colocándolo al final de la parte ordenada.</p>
+
+                <h4>🔄 Proceso:</h4>
+                <ul>
+                    <li>Encuentra el elemento mínimo en la parte desordenada.</li>
+                    <li>Intercambia el elemento mínimo con el primer elemento de la parte desordenada.</li>
+                    <li>Amplía la parte ordenada y repite.</li>
+                </ul>
+
+                <div class="code-example">
+<span class="preprocessor">#include</span> <span class="string">&lt;vector&gt;</span>
+<span class="keyword">using namespace</span> <span class="type">std</span>;
+
+<span class="type">void</span> <span class="function">selectionSort</span>(<span class="type">vector</span><span class="operator">&lt;</span><span class="type">int</span><span class="operator">&gt;</span><span class="operator">&amp;</span> arr) {
+    <span class="type">int</span> n <span class="operator">=</span> arr.<span class="function">size</span>();
+    <span class="keyword">for</span> (<span class="type">int</span> i <span class="operator">=</span> <span class="number">0</span>; i <span class="operator">&lt;</span> n <span class="operator">-</span> <span class="number">1</span>; i<span class="operator">++</span>) {
+        <span class="type">int</span> minIdx <span class="operator">=</span> i;
+        <span class="keyword">for</span> (<span class="type">int</span> j <span class="operator">=</span> i <span class="operator">+</span> <span class="number">1</span>; j <span class="operator">&lt;</span> n; j<span class="operator">++</span>) {
+            <span class="keyword">if</span> (arr[j] <span class="operator">&lt;</span> arr[minIdx]) {
+                minIdx <span class="operator">=</span> j;
+            }
+        }
+        <span class="keyword">if</span> (minIdx <span class="operator">!=</span> i) {
+            <span class="type">int</span> temp <span class="operator">=</span> arr[i];
+            arr[i] <span class="operator">=</span> arr[minIdx];
+            arr[minIdx] <span class="operator">=</span> temp;
+        }
+    }
+}
+                </div>
+
+                <table class="complexity-table">
+                    <thead>
+                        <tr>
+                            <th>Caso</th>
+                            <th>Complejidad Temporal</th>
+                            <th>Complejidad Espacial</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Mejor</td>
+                            <td>O(n²)</td>
+                            <td>O(1)</td>
+                        </tr>
+                        <tr>
+                            <td>Promedio</td>
+                            <td>O(n²)</td>
+                            <td>O(1)</td>
+                        </tr>
+                        <tr>
+                            <td>Peor</td>
+                            <td>O(n²)</td>
+                            <td>O(1)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="visual-section">
+                    <h3>🎨 Visualización Interactiva</h3>
+                    <div class="animation-container">
+                        <div id="selection-sort-canvas"></div>
+                    </div>
+                    <div>
+                        <button class="btn" onclick="resetSelectionSort()">Reiniciar</button>
+                        <button class="btn" onclick="startSelectionSort()">Iniciar Animación</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <h3>📚 Material Complementario</h3>
+            <p>Recursos adicionales para profundizar en el tema:</p>
+            <div class="reference-links">
+                <div class="reference-card">
+                    <h4>📖 Libros Recomendados</h4>
+                    <ul>
+                        <li>"Introduction to Algorithms" - Cormen, Leiserson, Rivest, Stein</li>
+                        <li>"Algorithms, Part I" - Robert Sedgewick</li>
+                    </ul>
+                </div>
+                <div class="reference-card">
+                    <h4>💻 Plataformas de Práctica</h4>
+                    <ul>
+                        <li>LeetCode - Sorting Problems</li>
+                        <li>HackerRank - Algorithms Track</li>
+                        <li>GeeksforGeeks - Sorting Tutorials</li>
+                    </ul>
+                </div>
+                <div class="reference-card">
+                    <h4>🎥 Videos Educativos</h4>
+                    <ul>
+                        <li>MIT OpenCourseWare - Sorting Algorithms</li>
+                        <li>YouTube - mycodeschool Sorting Algorithms</li>
+                    </ul>
+                </div>
+            </div>
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.3);">
+                <p><strong>Autor:</strong> Alexander Narváez</p>
+                <p><strong>Institución:</strong> EAFIT 2025</p>
+                <p><strong>Curso:</strong> Algoritmos y Estructuras de Datos 1</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Global variables for animations
+        let bubbleSortArray = [64, 34, 25, 12, 22, 11, 90];
+        let insertionSortArray = [64, 34, 25, 12, 22, 11, 90];
+        let selectionSortArray = [64, 34, 25, 12, 22, 11, 90];
+        let bubbleSortState = { i: 0, j: 0, done: false };
+        let insertionSortState = { i: 1, j: 0, key: 0, done: false };
+        let selectionSortState = { i: 0, minIdx: 0, j: 0, done: false };
+        let isAnimating = false;
+        let sketches = {};
+
+        // Tab functionality
+        function openTab(tabId) {
+            console.log('Opening tab:', tabId);
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`.tab-button[onclick="openTab('${tabId}')"]`).classList.add('active');
+
+            // Stop all animations when switching tabs
+            isAnimating = false;
+            resetBubbleSort();
+            resetInsertionSort();
+            resetSelectionSort();
+        }
+
+        // Common draw function for bars
+        function drawBars(sketch, arr, highlight1 = -1, highlight2 = -1, sorted = []) {
+            sketch.background(255);
+            let barWidth = sketch.width / arr.length;
+            for (let i = 0; i < arr.length; i++) {
+                let color = [100, 100, 255]; // Default blue
+                if (i === highlight1 || i === highlight2) {
+                    color = [255, 100, 100]; // Red for comparing/swapping
+                } else if (sorted.includes(i)) {
+                    color = [100, 255, 100]; // Green for sorted
+                }
+                sketch.fill(color);
+                sketch.noStroke();
+                sketch.rect(i * barWidth, sketch.height - arr[i] * 4, barWidth - 2, arr[i] * 4);
+                sketch.fill(0);
+                sketch.textAlign(sketch.CENTER);
+                sketch.text(arr[i], i * barWidth + barWidth / 2, sketch.height - arr[i] * 4 - 10);
+            }
+        }
+
+        // Bubble Sort Animation
+        function setupBubbleSort() {
+            sketches.bubbleSort = new p5(function(sketch) {
+                sketch.setup = function() {
+                    let canvas = sketch.createCanvas(600, 400);
+                    canvas.parent('bubble-sort-canvas');
+                    sketch.frameRate(10);
+                };
+
+                sketch.draw = function() {
+                    drawBars(sketch, bubbleSortArray, bubbleSortState.j, bubbleSortState.j + 1, 
+                        bubbleSortState.done ? Array.from({length: bubbleSortArray.length}, (_, i) => i) : 
+                        Array.from({length: bubbleSortArray.length - bubbleSortState.i - 1}, (_, k) => bubbleSortArray.length - 1 - k));
+                    if (!bubbleSortState.done && isAnimating) {
+                        if (bubbleSortState.j < bubbleSortArray.length - bubbleSortState.i - 1) {
+                            if (bubbleSortArray[bubbleSortState.j] > bubbleSortArray[bubbleSortState.j + 1]) {
+                                let temp = bubbleSortArray[bubbleSortState.j];
+                                bubbleSortArray[bubbleSortState.j] = bubbleSortArray[bubbleSortState.j + 1];
+                                bubbleSortArray[bubbleSortState.j + 1] = temp;
+                            }
+                            bubbleSortState.j++;
+                        } else {
+                            bubbleSortState.i++;
+                            bubbleSortState.j = 0;
+                            if (bubbleSortState.i >= bubbleSortArray.length - 1) {
+                                bubbleSortState.done = true;
+                                isAnimating = false;
+                            }
+                        }
+                    }
+                };
+            }, document.getElementById('bubble-sort-canvas'));
+        }
+
+        function startBubbleSort() {
+            console.log('Starting Bubble Sort animation');
+            if (!isAnimating) {
+                isAnimating = true;
+            }
+        }
+
+        function resetBubbleSort() {
+            console.log('Resetting Bubble Sort');
+            bubbleSortArray = [64, 34, 25, 12, 22, 11, 90];
+            bubbleSortState = { i: 0, j: 0, done: false };
+            isAnimating = false;
+        }
+
+        // Insertion Sort Animation
+        function setupInsertionSort() {
+            sketches.insertionSort = new p5(function(sketch) {
+                sketch.setup = function() {
+                    let canvas = sketch.createCanvas(600, 400);
+                    canvas.parent('insertion-sort-canvas');
+                    sketch.frameRate(10);
+                };
+
+                sketch.draw = function() {
+                    let sorted = Array.from({length: insertionSortState.i}, (_, k) => k);
+                    drawBars(sketch, insertionSortArray, insertionSortState.j, insertionSortState.i, sorted);
+                    if (!insertionSortState.done && isAnimating) {
+                        if (insertionSortState.i < insertionSortArray.length) {
+                            if (insertionSortState.j >= 0 && insertionSortArray[insertionSortState.j] > insertionSortState.key) {
+                                insertionSortArray[insertionSortState.j + 1] = insertionSortArray[insertionSortState.j];
+                                insertionSortState.j--;
+                            } else {
+                                insertionSortArray[insertionSortState.j + 1] = insertionSortState.key;
+                                insertionSortState.i++;
+                                if (insertionSortState.i < insertionSortArray.length) {
+                                    insertionSortState.key = insertionSortArray[insertionSortState.i];
+                                    insertionSortState.j = insertionSortState.i - 1;
+                                } else {
+                                    insertionSortState.done = true;
+                                    isAnimating = false;
+                                }
+                            }
+                        }
+                    }
+                };
+            }, document.getElementById('insertion-sort-canvas'));
+        }
+
+        function startInsertionSort() {
+            console.log('Starting Insertion Sort animation');
+            if (!isAnimating) {
+                isAnimating = true;
+                insertionSortState.key = insertionSortArray[insertionSortState.i];
+                insertionSortState.j = insertionSortState.i - 1;
+            }
+        }
+
+        function resetInsertionSort() {
+            console.log('Resetting Insertion Sort');
+            insertionSortArray = [64, 34, 25, 12, 22, 11, 90];
+            insertionSortState = { i: 1, j: 0, key: 0, done: false };
+            isAnimating = false;
+        }
+
+        // Selection Sort Animation
+        function setupSelectionSort() {
+            sketches.selectionSort = new p5(function(sketch) {
+                sketch.setup = function() {
+                    let canvas = sketch.createCanvas(600, 400);
+                    canvas.parent('selection-sort-canvas');
+                    sketch.frameRate(10);
+                };
+
+                sketch.draw = function() {
+                    let sorted = Array.from({length: selectionSortState.i}, (_, k) => k);
+                    drawBars(sketch, selectionSortArray, selectionSortState.j, selectionSortState.minIdx, sorted);
+                    if (!selectionSortState.done && isAnimating) {
+                        if (selectionSortState.i < selectionSortArray.length - 1) {
+                            if (selectionSortState.j < selectionSortArray.length) {
+                                if (selectionSortArray[selectionSortState.j] < selectionSortArray[selectionSortState.minIdx]) {
+                                    selectionSortState.minIdx = selectionSortState.j;
+                                }
+                                selectionSortState.j++;
+                            } else {
+                                if (selectionSortState.minIdx !== selectionSortState.i) {
+                                    let temp = selectionSortArray[selectionSortState.i];
+                                    selectionSortArray[selectionSortState.i] = selectionSortArray[selectionSortState.minIdx];
+                                    selectionSortArray[selectionSortState.minIdx] = temp;
+                                }
+                                selectionSortState.i++;
+                                selectionSortState.j = selectionSortState.i + 1;
+                                selectionSortState.minIdx = selectionSortState.i;
+                                if (selectionSortState.i >= selectionSortArray.length - 1) {
+                                    selectionSortState.done = true;
+                                    isAnimating = false;
+                                }
+                            }
+                        }
+                    }
+                };
+            }, document.getElementById('selection-sort-canvas'));
+        }
+
+        function startSelectionSort() {
+            console.log('Starting Selection Sort animation');
+            if (!isAnimating) {
+                isAnimating = true;
+                selectionSortState.j = selectionSortState.i + 1;
+                selectionSortState.minIdx = selectionSortState.i;
+            }
+        }
+
+        function resetSelectionSort() {
+            console.log('Resetting Selection Sort');
+            selectionSortArray = [64, 34, 25, 12, 22, 11, 90];
+            selectionSortState = { i: 0, minIdx: 0, j: 0, done: false };
+            isAnimating = false;
+        }
+
+        // Initialize animations
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Initializing animations');
+            setupBubbleSort();
+            setupInsertionSort();
+            setupSelectionSort();
+
+            // Animate tab entrance
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach((tab, index) => {
+                setTimeout(() => {
+                    tab.style.opacity = '0';
+                    tab.style.transform = 'translateY(50px) scale(0.9)';
+                    tab.style.transition = 'all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                    if (tab.classList.contains('active')) {
+                        tab.style.opacity = '1';
+                        tab.style.transform = 'translateY(0) scale(1)';
+                    }
+                }, index * 150);
+            });
+
+            // Ensure only one tab is active initially
+            openTab('bubble-sort');
+        });
+    </script>
+</body>
+</html>
