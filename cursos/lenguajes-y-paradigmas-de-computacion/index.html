@@ -18,172 +18,39 @@
             margin: 0;
             padding: 0;
         }
-        .sidebar {
-            width: 16rem;
-            background-color: var(--sidebar-bg, #2c3e50);
-            color: #ecf0f1;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            padding-top: 20px;
-            transition: transform 0.3s ease-in-out;
-            z-index: 1000;
-        }
-        .sidebar.hidden {
-            transform: translateX(-16rem);
-        }
-        .sidebar ul {
-            list-style: none;
-            padding: 0;
-        }
-        .sidebar ul li a {
-            color: #ecf0f1;
-            text-decoration: none;
-            padding: 10px 20px;
-            display: block;
-            font-size: 16px;
-            transition: background-color 0.3s;
-        }
-        .sidebar ul li a:hover,
-        .sidebar ul li a.active {
-            background-color: var(--sidebar-hover, #34495e);
-        }
-        .home-icon {
-            display: flex;
-            align-items: center;
-            padding: 10px 20px;
-            color: #ecf0f1;
-            text-decoration: none;
-            font-size: 16px;
-        }
-        .home-icon:hover {
-            background-color: var(--sidebar-hover, #34495e);
-        }
-        .home-icon svg {
-            margin-right: 10px;
-        }
-        .color-palette {
-            padding: 10px 20px;
-            display: flex;
-            gap: 10px;
-        }
-        .color-option {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: border-color 0.3s;
-        }
-        .color-option:hover,
-        .color-option.selected {
-            border-color: #fff;
-        }
-        .main-content {
-            margin-left: 16rem;
-            padding: 20px;
-            min-height: calc(100vh - 60px);
-            transition: margin-left 0.3s ease-in-out;
-        }
-        .main-content.full-screen {
-            margin-left: 0;
-        }
-        .course-header {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        .course-header h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.5rem;
-            color: var(--primary-color, #2c3e50);
-            margin: 0;
-        }
-        .course-header p {
-            color: #7f8c8d;
-            font-size: 1.1rem;
-        }
-        .content-area {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            position: relative;
-            overflow: auto;
-        }
-        .content-area iframe {
-            width: 100%;
-            border: none;
-            min-height: 500px;
-            height: auto;
-        }
-        .submenu {
-            display: none;
-            padding-left: 20px;
-        }
-        .submenu.active {
-            display: block;
-        }
-        .submenu a {
-            font-size: 14px;
-            padding: 8px 20px;
-        }
-        .toggle-sidebar {
-            display: flex;
-            align-items: center;
-            padding: 10px 20px;
-            color: #ecf0f1;
-            text-decoration: none;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        .toggle-sidebar:hover {
-            background-color: var(--sidebar-hover, #34495e);
-        }
-        .toggle-sidebar svg {
-            margin-right: 10px;
-        }
-        .floating-toggle {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            background-color: var(--sidebar-bg, #2c3e50);
-            color: #ecf0f1;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            display: none;
-            z-index: 1001;
-        }
-        .floating-toggle:hover {
-            background-color: var(--sidebar-hover, #34495e);
-        }
-        .floating-toggle.active {
-            display: block;
-        }
+        .sidebar { width: 16rem; background-color: var(--sidebar-bg, #2c3e50); color: #ecf0f1; height: 100vh; position: fixed; top: 0; left: 0; padding-top: 20px; transition: transform 0.3s ease-in-out; z-index: 1000; }
+        .sidebar.hidden { transform: translateX(-16rem); }
+        .sidebar ul { list-style: none; padding: 0; }
+        .sidebar ul li a { color: #ecf0f1; text-decoration: none; padding: 10px 20px; display: block; font-size: 16px; transition: background-color 0.3s; }
+        .sidebar ul li a:hover, .sidebar ul li a.active { background-color: var(--sidebar-hover, #34495e); }
+        .home-icon { display: flex; align-items: center; padding: 10px 20px; color: #ecf0f1; text-decoration: none; font-size: 16px; }
+        .home-icon:hover { background-color: var(--sidebar-hover, #34495e); }
+        .home-icon svg { margin-right: 10px; }
+        .color-palette { padding: 10px 20px; display: flex; gap: 10px; }
+        .color-option { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: border-color 0.3s; }
+        .color-option:hover, .color-option.selected { border-color: #fff; }
+        .main-content { margin-left: 16rem; padding: 20px; min-height: calc(100vh - 60px); transition: margin-left 0.3s ease-in-out; }
+        .main-content.full-screen { margin-left: 0; }
+        .course-header { background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .course-header h1 { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--primary-color, #2c3e50); margin: 0; }
+        .course-header p { color: #7f8c8d; font-size: 1.1rem; }
+        .content-area { background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: relative; overflow: auto; }
+        .content-area iframe { width: 100%; border: none; min-height: 500px; height: auto; }
+        .submenu { display: none; padding-left: 20px; }
+        .submenu.active { display: block; }
+        .submenu a { font-size: 14px; padding: 8px 20px; }
+        .toggle-sidebar { display: flex; align-items: center; padding: 10px 20px; color: #ecf0f1; text-decoration: none; font-size: 16px; cursor: pointer; }
+        .toggle-sidebar:hover { background-color: var(--sidebar-hover, #34495e); }
+        .toggle-sidebar svg { margin-right: 10px; }
+        .floating-toggle { position: fixed; top: 20px; left: 20px; background-color: var(--sidebar-bg, #2c3e50); color: #ecf0f1; padding: 10px; border-radius: 8px; cursor: pointer; display: none; z-index: 1001; }
+        .floating-toggle:hover { background-color: var(--sidebar-hover, #34495e); }
+        .floating-toggle.active { display: block; }
         @media (max-width: 768px) {
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-                transform: none;
-            }
-            .sidebar.hidden {
-                display: none;
-            }
-            .main-content {
-                margin-left: 0;
-            }
-            .main-content.full-screen {
-                margin-left: 0;
-            }
-            .floating-toggle {
-                top: 10px;
-                left: 10px;
-            }
+            .sidebar { width: 100%; height: auto; position: relative; transform: none; }
+            .sidebar.hidden { display: none; }
+            .main-content { margin-left: 0; }
+            .main-content.full-screen { margin-left: 0; }
+            .floating-toggle { top: 10px; left: 10px; }
         }
     </style>
 </head>
@@ -233,11 +100,12 @@
                 <div class="submenu" id="submenu-clase3">
                     <a href="#" onclick="loadContent('clase3', 'memorias')">Memorias Profe</a>
                     <a href="#" onclick="loadContent('clase3', 'notas')">Notas Estudiantes</a>
-                </ Complexes
+                </div>
             </li>
             <li>
                 <a href="#" onclick="toggleSubmenu('clase4')">Clase 4</a>
                 <div class="submenu" id="submenu-clase4">
+                    <!-- Esta es la que pediste: abre clase4.pdf -->
                     <a href="#" onclick="loadContent('clase4', 'memorias')">Memorias Profe</a>
                     <a href="#" onclick="loadContent('clase4', 'test1')">Test 1</a>
                     <a href="#" onclick="loadContent('clase4', 'test2')">Test 2</a>
@@ -381,6 +249,9 @@
             src = 'notasclase2.html';
         } else if (clase === 'clase3' && type === 'memorias') {
             src = 'clase3.html';
+        } else if (clase === 'clase4' && type === 'memorias') {
+            // ✅ Abrir PDF de la clase 4
+            src = 'clase4.pdf';
         } else if (clase === 'clase4' && type === 'test1') {
             src = 'test1.html';
         } else if (clase === 'clase4' && type === 'test2') {
@@ -392,17 +263,27 @@
         }
 
         if (src) {
-            contentArea.innerHTML = `<iframe src="${src}" id="contentFrame"></iframe>`;
+            contentArea.innerHTML = `<iframe src="${src}" id="contentFrame" type="${src.toLowerCase().endsWith('.pdf') ? 'application/pdf' : ''}"></iframe>`;
             setTimeout(() => {
                 const iframe = document.getElementById('contentFrame');
-                if (iframe) {
-                    iframe.onload = function() {
+                if (!iframe) return;
+                // Si es PDF, usamos una altura fija cómoda
+                if (src.toLowerCase().endsWith('.pdf')) {
+                    iframe.style.height = '90vh';
+                    iframe.style.minHeight = '600px';
+                    return;
+                }
+                // Para HTML, ajustamos al contenido
+                iframe.onload = function() {
+                    try {
                         const doc = iframe.contentDocument || iframe.contentWindow.document;
                         const body = doc.body;
-                        const height = body.scrollHeight;
+                        const height = Math.max(body.scrollHeight, 500);
                         iframe.style.height = height + 'px';
-                    };
-                }
+                    } catch (e) {
+                        iframe.style.minHeight = '700px';
+                    }
+                };
             }, 100);
         } else {
             contentArea.innerHTML = `<p>El contenido para ${clase.replace('clase', 'Clase ')} (${type === 'memorias' ? 'Memorias Profe' : type === 'notas' ? 'Notas Estudiantes' : type}) aún no está disponible. Selecciona otra clase o regresa pronto.</p>`;

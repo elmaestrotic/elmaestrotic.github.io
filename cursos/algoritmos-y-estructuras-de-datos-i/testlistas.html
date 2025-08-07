@@ -1,0 +1,400 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicios Avanzados de Listas Simplemente Enlazadas en C++ (Basado en Alexander Narváez)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .exercise {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .solution {
+            display: none;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-left: 3px solid #4CAF50;
+            margin-top: 10px;
+        }
+        .solution-toggle {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        .solution-toggle:hover {
+            background-color: #45a049;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ejercicios Avanzados de Listas Simplemente Enlazadas en C++ - Basado en la Presentación de Alexander Narváez</h1>
+
+    <div class="exercise">
+        <h3>1. Crear una lista vacía</h3>
+        <p>📝 Enunciado: Escribe una función <code>crearLista</code> que inicialice una lista simplemente enlazada con un puntero <code>primero</code> apuntando a <code>NULL</code>, como se describe en la presentación.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution1')">Ver solución</button>
+        <div id="solution1" class="solution">
+            <pre>
+#include <iostream>
+struct Nodo {
+    int dato;
+    Nodo* siguiente;
+};
+void crearLista(Nodo*& primero) {
+    primero = NULL;
+}
+int main() {
+    Nodo* primero;
+    crearLista(primero);
+    std::cout << "Lista creada, primero = " << primero << std::endl;
+    return 0;
+}
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>2. Insertar un nodo al inicio</h3>
+        <p>📝 Enunciado: Implementa una función <code>insertarInicio</code> que cree un nuevo nodo y lo asigne como el primer nodo de la lista, actualizando el puntero <code>primero</code>.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution2')">Ver solución</button>
+        <div id="solution2" class="solution">
+            <pre>
+#include <iostream>
+struct Nodo {
+    int dato;
+    Nodo* siguiente;
+};
+void insertarInicio(Nodo*& primero, int valor) {
+    Nodo* nuevo = new Nodo;
+    nuevo->dato = valor;
+    nuevo->siguiente = primero;
+    primero = nuevo;
+}
+int main() {
+    Nodo* primero = NULL;
+    insertarInicio(primero, 5);
+    std::cout << "Nodo insertado, valor = " << primero->dato << std::endl;
+    return 0;
+}
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>3. Insertar un nodo al final</h3>
+        <p>📝 Enunciado: Escribe una función <code>insertarFinal</code> que recorra la lista hasta el último nodo y añada un nuevo nodo al final, como se muestra en la presentación.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution3')">Ver solución</button>
+        <div id="solution3" class="solution">
+            <pre>
+#include <iostream>
+struct Nodo {
+    int dato;
+    Nodo* siguiente;
+};
+void insertarFinal(Nodo*& primero, int valor) {
+    Nodo* nuevo = new Nodo;
+    nuevo->dato = valor;
+    nuevo->siguiente = NULL;
+    if (primero == NULL) {
+        primero = nuevo;
+    } else {
+        Nodo* aux = primero;
+        while (aux->siguiente != NULL) {
+            aux = aux->siguiente;
+        }
+        aux->siguiente = nuevo;
+    }
+}
+int main() {
+    Nodo* primero = NULL;
+    insertarFinal(primero, 10);
+    std::cout << "Nodo insertado al final, valor = " << primero->dato << std::endl;
+    return 0;
+}
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>4. Contar nodos en la lista</h3>
+        <p>📝 Enunciado: Crea una función <code>contarNodos</code> que recorra la lista y devuelva el número de nodos, similar a la gestión de tamaño mencionada en la presentación.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution4')">Ver solución</button>
+        <div id="solution4" class="solution">
+            <pre>
+#include <iostream>
+struct Nodo {
+    int dato;
+    Nodo* siguiente;
+};
+int contarNodos(Nodo* primero) {
+    int contador = 0;
+    Nodo* aux = primero;
+    while (aux != NULL) {
+        contador++;
+        aux = aux->siguiente;
+    }
+    return contador;
+}
+int main() {
+    Nodo* primero = NULL;
+    std::cout << "Número de nodos: " << contarNodos(primero) << std::endl;
+    return 0;
+}
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>5. Buscar un elemento</h3>
+        <p>📝 Enunciado: Implementa una función <code>buscarElemento</code> que recorra la lista y devuelva <code>true</code> si encuentra un valor dado, <code>false</code> en caso contrario.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution5')">Ver solución</button>
+        <div id="solution5" class="solution">
+            <pre>
+#include <iostream>
+struct Nodo {
+    int dato;
+    Nodo* siguiente;
+};
+bool buscarElemento(Nodo* primero, int valor) {
+    Nodo* aux = primero;
+    while (aux != NULL) {
+        if (aux->dato == valor) return true;
+        aux = aux->siguiente;
+    }
+    return false;
+}
+int main() {
+    Nodo* primero = NULL;
+    std::cout << "Elemento 5 encontrado: " << (buscarElemento(primero, 5) ? "Sí" : "No") << std::endl;
+    return 0;
+}
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>6. Eliminar el primer nodo</h3>
+        <p>📝 Enunciado: Escribe una función <code>eliminarPrimero</code> que elimine el primer nodo de la lista y libere la memoria, actualizando el puntero <code>primero</code>.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution6')">Ver solución</button>
+        <div id="solution6" class="solution">
+            <pre>
+#include <iostream>
+struct Nodo {
+    int dato;
+    Nodo* siguiente;
+};
+void eliminarPrimero(Nodo*& primero) {
+    if (primero == NULL) return;
+    Nodo* temp = primero;
+    primero = primero->siguiente;
+    delete temp;
+}
+int main() {
+    Nodo* primero = new Nodo{5, NULL};
+    eliminarPrimero(primero);
+    std::cout << "Primer nodo eliminado, primero = " << primero << std::endl;
+    return 0;
+}
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>7. Insertar en posición específica</h3>
+        <p>📝 Enunciado: Crea una función <code>insertarPosicion</code> que inserte un nodo con un valor dado en una posición específica, recorriendo la lista con un puntero auxiliar.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution7')">Ver solución</button>
+        <div id="solution7" class="solution">
+            <pre>
+#include <iostream>
+struct Nodo {
+    int dato;
+    Nodo* siguiente;
+};
+void insertarPosicion(Nodo*& primero, int valor, int posicion) {
+    if (posicion < 0) return;
+    Nodo* nuevo = new Nodo{valor, NULL};
+    if (posicion == 0) {
+        nuevo->siguiente = primero;
+        primero = nuevo;
+    } else {
+        Nodo* aux = primero;
+        for (int i = 0; i < posicion - 1 && aux != NULL; i++) {
+            aux = aux->siguiente;
+        }
+        if (aux != NULL) {
+            nuevo->siguiente = aux->siguiente;
+            aux->siguiente = nuevo;
+        } else {
+            delete nuevo;
+        }
+    }
+}
+int main() {
+    Nodo* primero = NULL;
+    insertarPosicion(primero, 10, 0);
+    std::cout << "Nodo insertado en posición 0, valor = " << primero->dato << std::endl;
+    return 0;
+}
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>8. Mostrar lista</h3>
+        <p>📝 Enunciado: Implementa una función <code>mostrarLista</code> que recorra la lista desde el primer nodo y muestre todos los valores en orden.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution8')">Ver solución</button>
+        <div id="solution8" class="solution">
+            <pre>
+#include <iostream>
+struct Nodo {
+    int dato;
+    Nodo* siguiente;
+};
+void mostrarLista(Nodo* primero) {
+    Nodo* aux = primero;
+    while (aux != NULL) {
+        std::cout << aux->dato << " ";
+        aux = aux->siguiente;
+    }
+    std::cout << std::endl;
+}
+int main() {
+    Nodo* primero = new Nodo{1, new Nodo{2, NULL}};
+    mostrarLista(primero);
+    return 0;
+}
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>9. Invertir la lista</h3>
+        <p>📝 Enunciado: Escribe una función <code>invertirLista</code> que invierta los enlaces de la lista simplemente enlazada, actualizando el puntero <code>primero</code>.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution9')">Ver solución</button>
+        <div id="solution9" class="solution">
+            <pre>
+#include <iostream>
+struct Nodo {
+    int dato;
+    Nodo* siguiente;
+};
+void invertirLista(Nodo*& primero) {
+    Nodo* prev = NULL;
+    Nodo* actual = primero;
+    Nodo* siguiente = NULL;
+    while (actual != NULL) {
+        siguiente = actual->siguiente;
+        actual->siguiente = prev;
+        prev = actual;
+        actual = siguiente;
+    }
+    primero = prev;
+}
+int main() {
+    Nodo* primero = new Nodo{1, new Nodo{2, NULL}};
+    invertirLista(primero);
+    std::cout << "Lista invertida, primer valor = " << primero->dato << std::endl;
+    return 0;
+}
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>10. Liberar memoria de la lista</h3>
+        <p>📝 Enunciado: Crea una función <code>liberarLista</code> que recorra la lista, libere la memoria de cada nodo y deje el puntero <code>primero</code> en <code>NULL</code>.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution10')">Ver solución</button>
+        <div id="solution10" class="solution">
+            <pre>
+#include <iostream>
+struct Nodo {
+    int dato;
+    Nodo* siguiente;
+};
+void liberarLista(Nodo*& primero) {
+    Nodo* actual = primero;
+    while (actual != NULL) {
+        Nodo* temp = actual;
+        actual = actual->siguiente;
+        delete temp;
+    }
+    primero = NULL;
+}
+int main() {
+    Nodo* primero = new Nodo{1, new Nodo{2, NULL}};
+    liberarLista(primero);
+    std::cout << "Lista liberada, primero = " << primero << std::endl;
+    return 0;
+}
+            </pre>
+        </div>
+    </div>
+
+    <script>
+        function toggleSolution(id) {
+            const solution = document.getElementById(id);
+            if (solution.style.display === "none" || solution.style.display === "") {
+                solution.style.display = "block";
+            } else {
+                solution.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
