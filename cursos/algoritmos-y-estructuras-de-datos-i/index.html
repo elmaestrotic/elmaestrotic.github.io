@@ -275,7 +275,8 @@
         document.querySelector(`.sidebar a[onclick="loadContent('${clase}', '${type}')"]`)?.classList.add('active');
 
         let src = '';
-        if (clase === 'clase1' && type === 'memorias') src = '../Operaciones con Arrays Estáticos en C++.html'; // Asumiendo que está en la raíz
+        // 👇 CAMBIO AQUÍ: ahora clase1/memorias carga clase1.html
+        if (clase === 'clase1' && type === 'memorias') src = 'clase1.html';
         else if (clase === 'clase2' && type === 'memorias') src = 'clase2.html';
         else if (clase === 'clase3' && type === 'memorias') src = 'clase3.html';
         else if (clase === 'clase4' && type === 'main') src = 'clase4.html';
