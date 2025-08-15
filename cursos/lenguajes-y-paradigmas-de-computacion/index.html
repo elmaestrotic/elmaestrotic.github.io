@@ -105,7 +105,6 @@
             <li>
                 <a href="#" onclick="toggleSubmenu('clase4')">Clase 4</a>
                 <div class="submenu" id="submenu-clase4">
-                    <!-- Esta es la que pediste: abre clase4.pdf -->
                     <a href="#" onclick="loadContent('clase4', 'memorias')">Memorias Profe</a>
                     <a href="#" onclick="loadContent('clase4', 'test1')">Test 1</a>
                     <a href="#" onclick="loadContent('clase4', 'test2')">Test 2</a>
@@ -115,8 +114,7 @@
             <li>
                 <a href="#" onclick="toggleSubmenu('clase5')">Clase 5</a>
                 <div class="submenu" id="submenu-clase5">
-                    <a href="#" onclick="loadContent('clase5', 'memorias')">Memorias Profe</a>
-                    <a href="#" onclick="loadContent('clase5', 'notas')">Notas Estudiantes</a>
+                    <a href="#" onclick="loadContent('clase5', 'simulacro')">Simulacro Haskell Listas</a>
                 </div>
             </li>
             <li>
@@ -250,7 +248,6 @@
         } else if (clase === 'clase3' && type === 'memorias') {
             src = 'clase3.html';
         } else if (clase === 'clase4' && type === 'memorias') {
-            // ✅ Abrir PDF de la clase 4
             src = 'clase4.pdf';
         } else if (clase === 'clase4' && type === 'test1') {
             src = 'test1.html';
@@ -258,6 +255,8 @@
             src = 'test2.html';
         } else if (clase === 'clase4' && type === 'test3') {
             src = 'test3.html';
+        } else if (clase === 'clase5' && type === 'simulacro') {
+            src = './simulacro-haskell-listas/index.html';
         } else {
             src = `${type}_${clase}.html`;
         }
@@ -267,13 +266,11 @@
             setTimeout(() => {
                 const iframe = document.getElementById('contentFrame');
                 if (!iframe) return;
-                // Si es PDF, usamos una altura fija cómoda
                 if (src.toLowerCase().endsWith('.pdf')) {
                     iframe.style.height = '90vh';
                     iframe.style.minHeight = '600px';
                     return;
                 }
-                // Para HTML, ajustamos al contenido
                 iframe.onload = function() {
                     try {
                         const doc = iframe.contentDocument || iframe.contentWindow.document;
