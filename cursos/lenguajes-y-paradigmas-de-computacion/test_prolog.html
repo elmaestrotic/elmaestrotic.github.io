@@ -1,0 +1,280 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicios de Programación Lógica en Prolog</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .exercise {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .solution {
+            display: none;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-left: 3px solid #4CAF50;
+            margin-top: 10px;
+        }
+        .solution-toggle {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        .solution-toggle:hover {
+            background-color: #45a049;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ejercicios de Programación Lógica en Prolog</h1>
+
+    <div class="exercise">
+        <h3>1. ¿Cómo se denominan los lenguajes para la programación lógica?</h3>
+        <p>📝 Enunciado: Identifique el término utilizado para describir los lenguajes de programación lógica según el documento.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution1')">Ver solución</button>
+        <div id="solution1" class="solution">
+            <p>Lenguajes descriptivos.</p>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>2. ¿Qué característica define a los programas en lenguajes descriptivos?</h3>
+        <p>📝 Enunciado: Explique cómo se expresan los programas en lenguajes lógicos descriptivos.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution2')">Ver solución</button>
+        <div id="solution2" class="solution">
+            <p>Los programas se expresan como hechos conocidos y relaciones lógicas sobre un problema. Los programadores afirman la existencia del resultado deseado y un intérprete lógico utiliza el ordenador para encontrar el resultado deseado haciendo inferencias para demostrar su existencia.</p>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>3. ¿Para qué es útil PROLOG?</h3>
+        <p>📝 Enunciado: Describa el propósito principal de PROLOG según el documento.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution3')">Ver solución</button>
+        <div id="solution3" class="solution">
+            <p>PROLOG es un lenguaje de programación muy útil para resolver problemas que implican objetos y relaciones entre objetos.</p>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>4. ¿Cuáles son los mecanismos básicos de PROLOG?</h3>
+        <p>📝 Enunciado: Liste los tres mecanismos básicos en los que se basa PROLOG.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution4')">Ver solución</button>
+        <div id="solution4" class="solution">
+            <ul>
+                <li>Unificación</li>
+                <li>Estructuras de datos basadas en árboles</li>
+                <li>Backtracking automático</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>5. ¿En qué consiste la sintaxis de PROLOG?</h3>
+        <p>📝 Enunciado: Identifique los componentes principales de la sintaxis del lenguaje PROLOG.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution5')">Ver solución</button>
+        <div id="solution5" class="solution">
+            <ul>
+                <li>Declarar hechos sobre objetos y sus relaciones</li>
+                <li>Hacer preguntas sobre objetos y sus relaciones</li>
+                <li>Definir reglas sobre objetos y sus relaciones</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>6. ¿Qué es un predicado en PROLOG?</h3>
+        <p>📝 Enunciado: Defina qué es un predicado en el contexto de PROLOG.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution6')">Ver solución</button>
+        <div id="solution6" class="solution">
+            <p>Un predicado es una función que devuelve verdadero o falso.</p>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>7. ¿Qué describen los hechos en PROLOG?</h3>
+        <p>📝 Enunciado: Explique el rol de los hechos en PROLOG.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution7')">Ver solución</button>
+        <div id="solution7" class="solution">
+            <p>Los hechos describen las relaciones entre los términos.</p>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>8. ¿Cuáles son los términos simples en PROLOG?</h3>
+        <p>📝 Enunciado: Liste los tipos de términos simples mencionados en el documento.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution8')">Ver solución</button>
+        <div id="solution8" class="solution">
+            <p>Los términos simples incluyen números y átomos.</p>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>9. Ejemplo de hecho en PROLOG</h3>
+        <p>📝 Enunciado: Escriba un hecho en PROLOG que indique que Laura es progenitora de Damián.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution9')">Ver solución</button>
+        <div id="solution9" class="solution">
+            <pre>progenitor(laura, damian).</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>10. ¿Qué es la unificación en PROLOG?</h3>
+        <p>📝 Enunciado: Describa el proceso de unificación en PROLOG.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution10')">Ver solución</button>
+        <div id="solution10" class="solution">
+            <p>La unificación es simplemente una lista de sustituciones de términos por variables. Una consulta de la base de datos se empareja con su definición de predicado en la base de datos. Los términos de la consulta se emparejan cuando se encuentra un patrón adecuado entre los parámetros de un predicado en la base de datos. Si el predicado emparejado depende de que otros predicados sean verdaderos, entonces esas consultas se plantean al intérprete de Prolog. Este proceso continúa hasta que Prolog encuentra que ninguna sustitución satisface la consulta o encuentra una sustitución adecuada.</p>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>11. Ejemplo de relación parental</h3>
+        <p>📝 Enunciado: Basado en el ejemplo del documento, escriba el hecho que establece que Johan es el padre de Sophus.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution11')">Ver solución</button>
+        <div id="solution11" class="solution">
+            <pre>parent(johan, sophus).</pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>12. Predicado para hermano</h3>
+        <p>📝 Enunciado: Defina un predicado en PROLOG para la relación "hermano".</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution12')">Ver solución</button>
+        <div id="solution12" class="solution">
+            <p>El documento pide escribir predicados, pero no proporciona la definición exacta. Una posible definición podría ser basada en compartir progenitores.</p>
+            <pre>
+hermano(X, Y) :- progenitor(P, X), progenitor(P, Y), X \= Y, male(X).
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>13. Predicado para hermana</h3>
+        <p>📝 Enunciado: Defina un predicado en PROLOG para la relación "hermana".</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution13')">Ver solución</button>
+        <div id="solution13" class="solution">
+            <pre>
+hermana(X, Y) :- progenitor(P, X), progenitor(P, Y), X \= Y, female(X).
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>14. Predicado para abuelo</h3>
+        <p>📝 Enunciado: Defina un predicado en PROLOG para la relación "abuelo".</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution14')">Ver solución</button>
+        <div id="solution14" class="solution">
+            <pre>
+abuelo(X, Y) :- progenitor(X, P), progenitor(P, Y), male(X).
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>15. Predicado para nieto</h3>
+        <p>📝 Enunciado: Defina un predicado en PROLOG para la relación "nieto".</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution15')">Ver solución</button>
+        <div id="solution15" class="solution">
+            <pre>
+nieto(X, Y) :- progenitor(P, X), progenitor(Y, P), male(X).
+            </pre>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>16. Práctica con pasajes bíblicos</h3>
+        <p>📝 Enunciado: ¿Cuáles son los pasajes bíblicos mencionados para construir la base de conocimiento?</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution16')">Ver solución</button>
+        <div id="solution16" class="solution">
+            <ul>
+                <li>Mateo 1</li>
+                <li>Marcos 6:3</li>
+                <li>Lucas 1:39</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>17. Preguntas de la práctica</h3>
+        <p>📝 Enunciado: Liste las preguntas que se deben responder usando PROLOG en la práctica con la base de conocimiento bíblica.</p>
+        <button class="solution-toggle" onclick="toggleSolution('solution17')">Ver solución</button>
+        <div id="solution17" class="solution">
+            <ul>
+                <li>Mostrar abuelo, bisabuelo y tatarabuelo de Jesús</li>
+                <li>Mostrar hermanos de Jesus</li>
+                <li>Mostrar tíos, tías de Jesús</li>
+                <li>Mostrar primos de Jesús</li>
+                <li>Mostrar quienes son esposos</li>
+                <li>¿Cuántos y quienes eran los hijos de Jacob?</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function toggleSolution(id) {
+            const solution = document.getElementById(id);
+            if (solution.style.display === "none" || solution.style.display === "") {
+                solution.style.display = "block";
+            } else {
+                solution.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>

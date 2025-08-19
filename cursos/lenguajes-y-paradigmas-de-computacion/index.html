@@ -121,7 +121,7 @@
                 <a href="#" onclick="toggleSubmenu('clase6')">Clase 6</a>
                 <div class="submenu" id="submenu-clase6">
                     <a href="#" onclick="loadContent('clase6', 'memorias')">Memorias Profe</a>
-                    <a href="#" onclick="loadContent('clase6', 'notas')">Notas Estudiantes</a>
+                    <a href="#" onclick="loadContent('clase6', 'test')">Test Clase 6</a>
                 </div>
             </li>
             <li>
@@ -259,6 +259,8 @@
             src = './simulacro-haskell-listas/index.html';
         } else if (clase === 'clase6' && type === 'memorias') {
             src = 'clase6.html';
+        } else if (clase === 'clase6' && type === 'test') {
+            src = 'test_prolog.html';
         } else {
             src = `${type}_${clase}.html`;
         }
