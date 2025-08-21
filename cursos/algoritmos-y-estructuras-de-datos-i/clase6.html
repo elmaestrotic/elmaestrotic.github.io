@@ -1,0 +1,250 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algoritmos de Ordenamiento: Merge Sort, Quick Sort y Heap Sort</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fa;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        header {
+            background-color: #4a90e2;
+            color: white;
+            text-align: center;
+            padding: 50px 20px;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        section {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #4a90e2;
+            border-bottom: 2px solid #4a90e2;
+            padding-bottom: 10px;
+        }
+        .algorithm {
+            margin-bottom: 40px;
+        }
+        .svg-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #4a90e2;
+            color: white;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #4a90e2;
+            color: white;
+            margin-top: 40px;
+        }
+        code {
+            background-color: #f0f0f0;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Algoritmos de Ordenamiento: Merge Sort, Quick Sort y Heap Sort</h1>
+        <p>Una guía completa sobre su funcionamiento, complejidad y comparación.</p>
+    </header>
+
+    <section id="intro">
+        <h2>Introducción</h2>
+        <p>Los algoritmos de ordenamiento son fundamentales en la informática para organizar datos de manera eficiente. En esta página, exploraremos tres algoritmos populares: Merge Sort, Quick Sort y Heap Sort. Cada uno tiene sus fortalezas y se basa en diferentes principios. Analizaremos su funcionamiento, complejidad algorítmica y los compararemos entre sí.</p>
+    </section>
+
+    <section id="merge-sort" class="algorithm">
+        <h2>Merge Sort</h2>
+        <p>Merge Sort es un algoritmo de ordenamiento basado en el paradigma de "divide y conquista". Divide el arreglo en mitades recursivamente hasta que cada subarreglo tenga un solo elemento, y luego fusiona (merge) estos subarreglos de manera ordenada.</p>
+        <h3>Funcionamiento</h3>
+        <ol>
+            <li>Divide el arreglo en dos mitades.</li>
+            <li>Ordena recursivamente cada mitad.</li>
+            <li>Fusiona las dos mitades ordenadas en un solo arreglo ordenado.</li>
+        </ol>
+        <p>Ejemplo: Para un arreglo [38, 27, 43, 3, 9, 82, 10], se divide en [38, 27, 43] y [3, 9, 82, 10], y así sucesivamente hasta fusionar todo ordenado.</p>
+        <h3>Complejidad Algorítmica</h3>
+        <ul>
+            <li>Mejor caso: O(n log n)</li>
+            <li>Caso promedio: O(n log n)</li>
+            <li>Peor caso: O(n log n)</li>
+            <li>Espacio: O(n) (no es in-place)</li>
+        </ul>
+        <p>Es estable y predecible, ideal para grandes conjuntos de datos.</p>
+        <div class="svg-container">
+            <svg width="400" height="200" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+                <rect x="10" y="10" width="380" height="20" fill="#e0e0e0" />
+                <text x="200" y="25" text-anchor="middle">Arreglo Original</text>
+                <line x1="200" y1="40" x2="200" y2="60" stroke="black" />
+                <rect x="10" y="70" width="180" height="20" fill="#e0e0e0" />
+                <text x="100" y="85" text-anchor="middle">Mitad Izquierda</text>
+                <rect x="210" y="70" width="180" height="20" fill="#e0e0e0" />
+                <text x="300" y="85" text-anchor="middle">Mitad Derecha</text>
+                <line x1="100" y1="100" x2="100" y2="120" stroke="black" />
+                <line x1="300" y1="100" x2="300" y2="120" stroke="black" />
+                <rect x="10" y="130" width="80" height="20" fill="#e0e0e0" />
+                <rect x="110" y="130" width="80" height="20" fill="#e0e0e0" />
+                <rect x="210" y="130" width="80" height="20" fill="#e0e0e0" />
+                <rect x="310" y="130" width="80" height="20" fill="#e0e0e0" />
+                <text x="200" y="170" text-anchor="middle">División y Fusión</text>
+            </svg>
+            <p>Diagrama simplificado de Merge Sort (división y fusión).</p>
+        </div>
+    </section>
+
+    <section id="quick-sort" class="algorithm">
+        <h2>Quick Sort</h2>
+        <p>Quick Sort también sigue "divide y conquista". Selecciona un elemento pivote y particiona el arreglo en dos subarreglos: uno con elementos menores al pivote y otro con mayores. Luego, ordena recursivamente los subarreglos.</p>
+        <h3>Funcionamiento</h3>
+        <ol>
+            <li>Elige un pivote (por ejemplo, el último elemento).</li>
+            <li>Particiona el arreglo moviendo elementos menores a la izquierda y mayores a la derecha.</li>
+            <li>Recursivamente aplica Quick Sort a los subarreglos.</li>
+        </ol>
+        <p>Ejemplo: Para [38, 27, 43, 3, 9, 82, 10], si pivote es 10, particiona en menores y mayores, y recursa.</p>
+        <h3>Complejidad Algorítmica</h3>
+        <ul>
+            <li>Mejor caso: O(n log n)</li>
+            <li>Caso promedio: O(n log n)</li>
+            <li>Peor caso: O(n²) (cuando el pivote es siempre el menor/mayor)</li>
+            <li>Espacio: O(log n) (in-place, pero recursión usa pila)</li>
+        </ul>
+        <p>No es estable, pero es eficiente en la práctica con buena elección de pivote.</p>
+        <div class="svg-container">
+            <svg width="400" height="200" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+                <rect x="10" y="10" width="380" height="20" fill="#e0e0e0" />
+                <text x="200" y="25" text-anchor="middle">Arreglo</text>
+                <circle cx="200" cy="50" r="10" fill="#4a90e2" />
+                <text x="200" y="55" text-anchor="middle" fill="white">Pivote</text>
+                <line x1="100" y1="70" x2="100" y2="90" stroke="black" />
+                <line x1="300" y1="70" x2="300" y2="90" stroke="black" />
+                <rect x="10" y="100" width="180" height="20" fill="#e0e0e0" />
+                <text x="100" y="115" text-anchor="middle">Menores</text>
+                <rect x="210" y="100" width="180" height="20" fill="#e0e0e0" />
+                <text x="300" y="115" text-anchor="middle">Mayores</text>
+                <text x="200" y="150" text-anchor="middle">Partición alrededor del pivote</text>
+            </svg>
+            <p>Diagrama simplificado de Quick Sort (partición).</p>
+        </div>
+    </section>
+
+    <section id="heap-sort" class="algorithm">
+        <h2>Heap Sort</h2>
+        <p>Heap Sort utiliza una estructura de datos llamada heap (montículo binario). Primero construye un max-heap del arreglo, luego extrae repetidamente el elemento máximo y ajusta el heap.</p>
+        <h3>Funcionamiento</h3>
+        <ol>
+            <li>Construye un max-heap del arreglo.</li>
+            <li>Intercambia el raíz (máximo) con el último elemento y reduce el tamaño del heap.</li>
+            <li>Ajusta el heap (heapify) y repite hasta ordenar todo.</li>
+        </ol>
+        <p>Ejemplo: Para [38, 27, 43, 3, 9, 82, 10], se construye el heap y se extraen máximos.</p>
+        <h3>Complejidad Algorítmica</h3>
+        <ul>
+            <li>Mejor caso: O(n log n)</li>
+            <li>Caso promedio: O(n log n)</li>
+            <li>Peor caso: O(n log n)</li>
+            <li>Espacio: O(1) (in-place)</li>
+        </ul>
+        <p>No es estable, pero garantiza O(n log n) en peor caso y es in-place.</p>
+        <div class="svg-container">
+            <svg width="400" height="200" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="200" cy="20" r="15" fill="#e0e0e0" />
+                <text x="200" y="25" text-anchor="middle">Raíz</text>
+                <line x1="200" y1="40" x2="100" y2="80" stroke="black" />
+                <line x1="200" y1="40" x2="300" y2="80" stroke="black" />
+                <circle cx="100" cy="90" r="15" fill="#e0e0e0" />
+                <circle cx="300" cy="90" r="15" fill="#e0e0e0" />
+                <line x1="100" y1="110" x2="50" y2="150" stroke="black" />
+                <line x1="100" y1="110" x2="150" y2="150" stroke="black" />
+                <circle cx="50" cy="160" r="15" fill="#e0e0e0" />
+                <circle cx="150" cy="160" r="15" fill="#e0e0e0" />
+                <text x="200" y="190" text-anchor="middle">Estructura de Heap Binario</text>
+            </svg>
+            <p>Diagrama simplificado de Heap Sort (montículo binario).</p>
+        </div>
+    </section>
+
+    <section id="comparacion">
+        <h2>Comparación entre los Algoritmos</h2>
+        <p>Aquí una tabla comparativa para resaltar las diferencias clave:</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Algoritmo</th>
+                    <th>Mejor Caso</th>
+                    <th>Caso Promedio</th>
+                    <th>Peor Caso</th>
+                    <th>Espacio</th>
+                    <th>Estable</th>
+                    <th>In-Place</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Merge Sort</td>
+                    <td>O(n log n)</td>
+                    <td>O(n log n)</td>
+                    <td>O(n log n)</td>
+                    <td>O(n)</td>
+                    <td>Sí</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                    <td>Quick Sort</td>
+                    <td>O(n log n)</td>
+                    <td>O(n log n)</td>
+                    <td>O(n²)</td>
+                    <td>O(log n)</td>
+                    <td>No</td>
+                    <td>Sí</td>
+                </tr>
+                <tr>
+                    <td>Heap Sort</td>
+                    <td>O(n log n)</td>
+                    <td>O(n log n)</td>
+                    <td>O(n log n)</td>
+                    <td>O(1)</td>
+                    <td>No</td>
+                    <td>Sí</td>
+                </tr>
+            </tbody>
+        </table>
+        <p><strong>Resumen:</strong> Merge Sort es ideal cuando se necesita estabilidad y predictibilidad, pero usa más espacio. Quick Sort es rápido en promedio y eficiente en espacio, pero puede degradarse en peor caso. Heap Sort ofrece garantías en peor caso y es in-place, pero no es estable. La elección depende del contexto: para datos grandes y estables, Merge; para eficiencia general, Quick; para garantías sin espacio extra, Heap.</p>
+    </section>
+
+    <footer>
+        <p>Elaborado por Profe Narváez - Agosto 2025</p>
+    </footer>
+</body>
+</html>
+```
