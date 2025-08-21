@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Interactivo: Merge Sort, Quick Sort y Heap Sort</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fa;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        header {
+            background-color: #4a90e2;
+            color: white;
+            text-align: center;
+            padding: 50px 20px;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        section {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #4a90e2;
+            border-bottom: 2px solid #4a90e2;
+            padding-bottom: 10px;
+        }
+        .question {
+            margin-bottom: 30px;
+        }
+        .question p {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .options label {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .options input[type="radio"] {
+            margin-right: 10px;
+        }
+        .solution {
+            display: none;
+            background-color: #e0f7fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        .solution-button {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .solution-button:hover {
+            background-color: #357abd;
+        }
+        .svg-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #4a90e2;
+            color: white;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Test Interactivo: Algoritmos de Ordenamiento</h1>
+        <p>Prueba tus conocimientos sobre Merge Sort, Quick Sort y Heap Sort. ¡Elaborado por Profe Narváez!</p>
+    </header>
+
+    <section>
+        <h2>Test: Merge Sort, Quick Sort y Heap Sort</h2>
+        <p>Responde las siguientes 10 preguntas seleccionando la opción correcta. Haz clic en "Mostrar Solución" para ver la respuesta y su explicación.</p>
+
+        <div class="question">
+            <p>1. ¿Cuál de los siguientes algoritmos utiliza el paradigma de "divide y conquista" en su diseño principal?</p>
+            <div class="options">
+                <label><input type="radio" name="q1" value="a"> a) Solo Merge Sort</label>
+                <label><input type="radio" name="q1" value="b"> b) Solo Quick Sort</label>
+                <label><input type="radio" name="q1" value="c"> c) Merge Sort y Quick Sort</label>
+                <label><input type="radio" name="q1" value="d"> d) Ninguno de los tres</label>
+            </div>
+            <button class="solution-button" onclick="toggleSolution('solution1')">Mostrar Solución</button>
+            <div id="solution1" class="solution">
+                <p><strong>Respuesta correcta:</strong> c) Merge Sort y Quick Sort</p>
+                <p><strong>Explicación:</strong> Tanto Merge Sort como Quick Sort utilizan el paradigma de "divide y conquista". Merge Sort divide el arreglo en mitades y las fusiona, mientras que Quick Sort divide el arreglo en torno a un pivote. Heap Sort, en cambio, se basa en la estructura de un montículo binario y no sigue estrictamente este paradigma.</p>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>2. ¿Qué característica hace que Merge Sort sea preferido cuando se requiere estabilidad en el ordenamiento?</p>
+            <div class="options">
+                <label><input type="radio" name="q2" value="a"> a) Su complejidad espacial de O(1)</label>
+                <label><input type="radio" name="q2" value="b"> b) Su capacidad para mantener el orden relativo de elementos iguales</label>
+                <label><input type="radio" name="q2" value="c"> c) Su peor caso de O(n²)</label>
+                <label><input type="radio" name="q2" value="d"> d) Su naturaleza in-place</label>
+            </div>
+            <button class="solution-button" onclick="toggleSolution('solution2')">Mostrar Solución</button>
+            <div id="solution2" class="solution">
+                <p><strong>Respuesta correcta:</strong> b) Su capacidad para mantener el orden relativo de elementos iguales</p>
+                <p><strong>Explicación:</strong> Merge Sort es un algoritmo estable, lo que significa que preserva el orden relativo de elementos con valores iguales. Esto lo hace ideal cuando la estabilidad es importante. Sin embargo, no es in-place (usa O(n) de espacio) y su complejidad es O(n log n) en todos los casos.</p>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>3. ¿Cuál es la complejidad temporal en el peor caso de Quick Sort?</p>
+            <div class="options">
+                <label><input type="radio" name="q3" value="a"> a) O(n log n)</label>
+                <label><input type="radio" name="q3" value="b"> b) O(n²)</label>
+                <label><input type="radio" name="q3" value="c"> c) O(n)</label>
+                <label><input type="radio" name="q3" value="d"> d) O(log n)</label>
+            </div>
+            <button class="solution-button" onclick="toggleSolution('solution3')">Mostrar Solución</button>
+            <div id="solution3" class="solution">
+                <p><strong>Respuesta correcta:</strong> b) O(n²)</p>
+                <p><strong>Explicación:</strong> Quick Sort tiene una complejidad de O(n²) en el peor caso, que ocurre cuando el pivote elegido es siempre el menor o mayor elemento (por ejemplo, en un arreglo ya ordenado con un mal pivote). En el caso promedio y mejor caso, su complejidad es O(n log n).</p>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>4. ¿Qué estructura de datos es fundamental para el funcionamiento de Heap Sort?</p>
+            <div class="options">
+                <label><input type="radio" name="q4" value="a"> a) Lista enlazada</label>
+                <label><input type="radio" name="q4" value="b"> b) Árbol AVL</label>
+                <label><input type="radio" name="q4" value="c"> c) Montículo binario (Heap)</label>
+                <label><input type="radio" name="q4" value="d"> d) Cola de prioridad</label>
+            </div>
+            <button class="solution-button" onclick="toggleSolution('solution4')">Mostrar Solución</button>
+            <div id="solution4" class="solution">
+                <p><strong>Respuesta correcta:</strong> c) Montículo binario (Heap)</p>
+                <p><strong>Explicación:</strong> Heap Sort se basa en un montículo binario (max-heap), donde el elemento máximo está en la raíz. El algoritmo construye un max-heap y extrae repetidamente el elemento mayor para ordenar el arreglo.</p>
+                <div class="svg-container">
+                    <svg width="200" height="100" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="100" cy="10" r="10" fill="#e0e0e0" />
+                        <text x="100" y="15" text-anchor="middle">Raíz</text>
+                        <line x1="100" y1="20" x2="50" y2="40" stroke="black" />
+                        <line x1="100" y1="20" x2="150" y2="40" stroke="black" />
+                        <circle cx="50" cy="50" r="10" fill="#e0e0e0" />
+                        <circle cx="150" cy="50" r="10" fill="#e0e0e0" />
+                        <text x="100" y="80" text-anchor="middle">Heap Binario</text>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>5. ¿Cuál de los siguientes algoritmos es in-place (no requiere memoria adicional significativa)?</p>
+            <div class="options">
+                <label><input type="radio" name="q5" value="a"> a) Merge Sort</label>
+                <label><input type="radio" name="q5" value="b"> b) Quick Sort</label>
+                <label><input type="radio" name="q5" value="c"> c) Ambos, Merge Sort y Quick Sort</label>
+                <label><input type="radio" name="q5" value="d"> d) Ninguno de los dos</label>
+            </div>
+            <button class="solution-button" onclick="toggleSolution('solution5')">Mostrar Solución</button>
+            <div id="solution5" class="solution">
+                <p><strong>Respuesta correcta:</strong> b) Quick Sort</p>
+                <p><strong>Explicación:</strong> Quick Sort es in-place porque solo usa O(log n) de espacio para la pila de recursión, mientras que Merge Sort requiere O(n) de espacio adicional para almacenar los subarreglos durante la fusión. Heap Sort también es in-place, pero no está en las opciones.</p>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>6. En Merge Sort, ¿cuál es el paso clave después de dividir el arreglo en mitades?</p>
+            <div class="options">
+                <label><input type="radio" name="q6" value="a"> a) Seleccionar un pivote</label>
+                <label><input type="radio" name="q6" value="b"> b) Fusionar (merge) los subarreglos ordenados</label>
+                <label><input type="radio" name="q6" value="c"> c) Construir un max-heap</label>
+                <label><input type="radio" name="q6" value="d"> d) Reorganizar los elementos alrededor del pivote</label>
+            </div>
+            <button class="solution-button" onclick="toggleSolution('solution6')">Mostrar Solución</button>
+            <div id="solution6" class="solution">
+                <p><strong>Respuesta correcta:</strong> b) Fusionar (merge) los subarreglos ordenados</p>
+                <p><strong>Explicación:</strong> En Merge Sort, después de dividir el arreglo en mitades recursivamente hasta que cada subarreglo tiene un solo elemento, el paso clave es fusionar estos subarreglos de manera ordenada para formar el arreglo final.</p>
+                <div class="svg-container">
+                    <svg width="200" height="100" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="10" y="10" width="180" height="20" fill="#e0e0e0" />
+                        <text x="100" y="25" text-anchor="middle">Arreglo Original</text>
+                        <line x1="100" y1="40" x2="100" y2="60" stroke="black" />
+                        <rect x="10" y="70" width="80" height="20" fill="#e0e0e0" />
+                        <rect x="110" y="70" width="80" height="20" fill="#e0e0e0" />
+                        <text x="100" y="95" text-anchor="middle">División</text>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>7. ¿Por qué Quick Sort puede tener un peor caso de O(n²)?</p>
+            <div class="options">
+                <label><input type="radio" name="q7" value="a"> a) Porque siempre divide el arreglo en partes desiguales</label>
+                <label><input type="radio" name="q7" value="b"> b) Porque el pivote elegido es siempre el menor o mayor elemento</label>
+                <label><input type="radio" name="q7" value="c"> c) Porque no es un algoritmo recursivo</label>
+                <label><input type="radio" name="q7" value="d"> d) Porque requiere memoria adicional de O(n)</label>
+            </div>
+            <button class="solution-button" onclick="toggleSolution('solution7')">Mostrar Solución</button>
+            <div id="solution7" class="solution">
+                <p><strong>Respuesta correcta:</strong> b) Porque el pivote elegido es siempre el menor o mayor elemento</p>
+                <p><strong>Explicación:</strong> El peor caso de Quick Sort ocurre cuando el pivote es el menor o mayor elemento en cada partición (por ejemplo, en un arreglo ya ordenado con un pivote mal elegido), lo que resulta en particiones desbalanceadas y una complejidad de O(n²).</p>
+                <div class="svg-container">
+                    <svg width="200" height="100" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="10" y="10" width="180" height="20" fill="#e0e0e0" />
+                        <circle cx="180" cy="20" r="8" fill="#4a90e2" />
+                        <text x="180" y="25" text-anchor="middle" fill="white">P</text>
+                        <text x="100" y="50" text-anchor="middle">Partición desbalanceada</text>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>8. ¿Cuál de los siguientes algoritmos tiene una complejidad espacial de O(1)?</p>
+            <div class="options">
+                <label><input type="radio" name="q8" value="a"> a) Merge Sort</label>
+                <label><input type="radio" name="q8" value="b"> b) Quick Sort</label>
+                <label><input type="radio" name="q8" value="c"> c) Heap Sort</label>
+                <label><input type="radio" name="q8" value="d"> d) Ninguno de los tres</label>
+            </div>
+            <button class="solution-button" onclick="toggleSolution('solution8')">Mostrar Solución</button>
+            <div id="solution8" class="solution">
+                <p><strong>Respuesta correcta:</strong> c) Heap Sort</p>
+                <p><strong>Explicación:</strong> Heap Sort es in-place y usa O(1) de espacio adicional, ya que solo reorganiza el arreglo en forma de heap. Merge Sort usa O(n) para los subarreglos, y Quick Sort usa O(log n) para la pila de recursión.</p>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>9. ¿Qué algoritmo garantiza una complejidad de O(n log n) en todos los casos (mejor, promedio y peor)?</p>
+            <div class="options">
+                <label><input type="radio" name="q9" value="a"> a) Quick Sort</label>
+                <label><input type="radio" name="q9" value="b"> b) Merge Sort y Heap Sort</label>
+                <label><input type="radio" name="q9" value="c"> c) Solo Quick Sort</label>
+                <label><input type="radio" name="q9" value="d"> d) Solo Heap Sort</label>
+            </div>
+            <button class="solution-button" onclick="toggleSolution('solution9')">Mostrar Solución</button>
+            <div id="solution9" class="solution">
+                <p><strong>Respuesta correcta:</strong> b) Merge Sort y Heap Sort</p>
+                <p><strong>Explicación:</strong> Merge Sort y Heap Sort tienen una complejidad de O(n log n) en todos los casos (mejor, promedio y peor). Quick Sort, aunque eficiente en promedio (O(n log n)), puede degradarse a O(n²) en el peor caso.</p>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>10. Si necesitas ordenar un arreglo grande y garantizar estabilidad, ¿cuál algoritmo elegirías?</p>
+            <div class="options">
+                <label><input type="radio" name="q10" value="a"> a) Quick Sort</label>
+                <label><input type="radio" name="q10" value="b"> b) Merge Sort</label>
+                <label><input type="radio" name="q10" value="c"> c) Heap Sort</label>
+                <label><input type="radio" name="q10" value="d"> d) Ninguno de los tres</label>
+            </div>
+            <button class="solution-button" onclick="toggleSolution('solution10')">Mostrar Solución</button>
+            <div id="solution10" class="solution">
+                <p><strong>Respuesta correcta:</strong> b) Merge Sort</p>
+                <p><strong>Explicación:</strong> Merge Sort es el único de los tres algoritmos que es estable, preservando el orden relativo de elementos iguales. Quick Sort y Heap Sort no son estables, por lo que no son adecuados si la estabilidad es un requisito.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>Elaborado por Profe Narváez - Agosto 2025</p>
+    </footer>
+
+    <script>
+        function toggleSolution(id) {
+            const solution = document.getElementById(id);
+            if (solution.style.display === 'none' || solution.style.display === '') {
+                solution.style.display = 'block';
+            } else {
+                solution.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

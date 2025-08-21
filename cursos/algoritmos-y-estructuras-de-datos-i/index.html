@@ -219,13 +219,18 @@
                 <a href="#" onclick="toggleSubmenu('clase4')">Clase 4</a>
                 <div class="submenu" id="submenu-clase4">
                     <a href="#" onclick="loadContent('clase4', 'main')">Clase 4</a>
-                    <!-- Cambio aquí: 'modal' -> 'main' -->
                     <a href="#" onclick="loadContent('clase4', 'main')">Memorias del Profe</a>
                     <a href="#" onclick="loadContent('clase4', 'test')">Test</a>
                 </div>
             </li>
             <li><a href="#" onclick="toggleSubmenu('clase5')">Clase 5</a><div class="submenu" id="submenu-clase5"><a href="#" onclick="loadContent('clase5', 'memorias')">Memorias Profe</a></div></li>
-            <li><a href="#" onclick="toggleSubmenu('clase6')">Clase 6</a><div class="submenu" id="submenu-clase6"><a href="#" onclick="loadContent('clase6', 'memorias')">Memorias Profe</a></div></li>
+            <li>
+                <a href="#" onclick="toggleSubmenu('clase6')">Clase 6</a>
+                <div class="submenu" id="submenu-clase6">
+                    <a href="#" onclick="loadContent('clase6', 'memorias')">Memorias Profe</a>
+                    <a href="#" onclick="loadContent('clase6', 'test')">Test Clase 6</a>
+                </div>
+            </li>
             <li><a href="#" onclick="toggleSubmenu('clase7')">Clase 7</a><div class="submenu" id="submenu-clase7"><a href="#" onclick="loadContent('clase7', 'memorias')">Memorias Profe</a></div></li>
             <li><a href="#" onclick="toggleSubmenu('clase8')">Clase 8</a><div class="submenu" id="submenu-clase8"><a href="#" onclick="loadContent('clase8', 'memorias')">Memorias Profe</a></div></li>
             <li><a href="#" onclick="toggleSubmenu('clase9')">Clase 9</a><div class="submenu" id="submenu-clase9"><a href="#" onclick="loadContent('clase9', 'memorias')">Memorias Profe</a></div></li>
@@ -275,13 +280,14 @@
         document.querySelector(`.sidebar a[onclick="loadContent('${clase}', '${type}')"]`)?.classList.add('active');
 
         let src = '';
-        // 👇 CAMBIO AQUÍ: ahora clase1/memorias carga clase1.html
         if (clase === 'clase1' && type === 'memorias') src = 'clase1.html';
         else if (clase === 'clase2' && type === 'memorias') src = 'clase2.html';
         else if (clase === 'clase3' && type === 'memorias') src = 'clase3.html';
         else if (clase === 'clase4' && type === 'main') src = 'clase4.html';
         else if (clase === 'clase4' && type === 'modal') src = 'clase4_modal.html';
         else if (clase === 'clase4' && type === 'test') src = 'testlistas.html';
+        else if (clase === 'clase6' && type === 'memorias') src = 'clase6.html';
+        else if (clase === 'clase6' && type === 'test') src = 'testsorts.html';
         else if (clase >= 'clase5' && clase <= 'clase17' && type === 'memorias') src = clase + '.html';
         else src = type + '_' + clase + '.html';
 
