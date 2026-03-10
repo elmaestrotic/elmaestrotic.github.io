@@ -219,7 +219,7 @@
                 <a href="#" onclick="toggleSubmenu('clase4')">Clase 4</a>
                 <div class="submenu" id="submenu-clase4">
                     <a href="#" onclick="loadContent('clase4', 'main')">Clase 4</a>
-                    <a href="#" onclick="loadContent('clase4', 'main')">Memorias del Profe</a>
+                    <a href="#" onclick="loadContent('clase4', 'memorias')">Memorias del Profe</a>
                     <a href="#" onclick="loadContent('clase4', 'test')">Test</a>
                 </div>
             </li>
@@ -232,7 +232,16 @@
                 </div>
             </li>
             <li><a href="#" onclick="toggleSubmenu('clase7')">Clase 7</a><div class="submenu" id="submenu-clase7"><a href="#" onclick="loadContent('clase7', 'memorias')">Memorias Profe</a></div></li>
-            <li><a href="#" onclick="toggleSubmenu('clase8')">Clase 8</a><div class="submenu" id="submenu-clase8"><a href="#" onclick="loadContent('clase8', 'memorias')">Memorias Profe</a></div></li>
+
+            <!-- CLASE 8 ACTUALIZADA -->
+            <li>
+                <a href="#" onclick="toggleSubmenu('clase8')">Clase 8</a>
+                <div class="submenu" id="submenu-clase8">
+                    <a href="#" onclick="loadContent('clase8', 'avl')">Árboles AVL</a>
+                    <a href="#" onclick="loadContent('clase8', 'balanced')">Balanceado Binario</a>
+                </div>
+            </li>
+
             <li><a href="#" onclick="toggleSubmenu('clase9')">Clase 9</a><div class="submenu" id="submenu-clase9"><a href="#" onclick="loadContent('clase9', 'memorias')">Memorias Profe</a></div></li>
             <li><a href="#" onclick="toggleSubmenu('clase10')">Clase 10</a><div class="submenu" id="submenu-clase10"><a href="#" onclick="loadContent('clase10', 'memorias')">Memorias Profe</a></div></li>
             <li><a href="#" onclick="toggleSubmenu('clase11')">Clase 11</a><div class="submenu" id="submenu-clase11"><a href="#" onclick="loadContent('clase11', 'memorias')">Memorias Profe</a></div></li>
@@ -284,10 +293,16 @@
         else if (clase === 'clase2' && type === 'memorias') src = 'clase2.html';
         else if (clase === 'clase3' && type === 'memorias') src = 'clase3.html';
         else if (clase === 'clase4' && type === 'main') src = 'clase4.html';
-        else if (clase === 'clase4' && type === 'modal') src = 'clase4_modal.html';
+        else if (clase === 'clase4' && type === 'memorias') src = 'clase4_memorias.html'; // si tienes archivo separado
         else if (clase === 'clase4' && type === 'test') src = 'testlistas.html';
         else if (clase === 'clase6' && type === 'memorias') src = 'clase6.html';
         else if (clase === 'clase6' && type === 'test') src = 'testsorts.html';
+
+        // === NUEVO PARA CLASE 8 ===
+        else if (clase === 'clase8' && type === 'avl') src = 'avl.html';
+        else if (clase === 'clase8' && type === 'balanced') src = 'balancedtree.html';
+
+        // Resto de clases (memorias normales)
         else if (clase >= 'clase5' && clase <= 'clase17' && type === 'memorias') src = clase + '.html';
         else src = type + '_' + clase + '.html';
 
@@ -300,7 +315,7 @@
         iframe.onload = function() {
             const doc = iframe.contentDocument || iframe.contentWindow.document;
             const body = doc.body;
-            iframe.style.height = body.scrollHeight + 'px';
+            iframe.style.height = (body.scrollHeight + 50) + 'px'; // +50 para margen
         };
         iframe.onerror = function() {
             contentArea.innerHTML = `<p>Error: No se pudo cargar ${src}. Verifica que el archivo exista en la carpeta actual.</p>`;

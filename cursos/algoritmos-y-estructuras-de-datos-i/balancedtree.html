@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animación: Construcción de Árbol Balanceado por Narva</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .node-circle {
+            transition: all 0.5s ease;
+        }
+        .code-highlight {
+            background-color: #d1fae5; 
+            color: #065f46;
+            font-weight: bold;
+            border-radius: 2px;
+        }
+        .tree-line {
+            stroke: #94a3b8;
+            stroke-width: 2;
+            transition: opacity 0.5s;
+        }
+        .stack-item {
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen p-4 md:p-8 font-sans text-gray-800">
+    <div class="max-w-6xl mx-auto">
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-gray-800">Visualizador de Recursión por Narva</h1>
+            <p class="text-gray-600 italic">Recorrido completo del algoritmo para construir el árbol</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Panel Izquierdo: Código y Pila -->
+            <div class="space-y-6">
+                <div class="bg-white p-4 rounded-xl shadow-md border-t-4 border-emerald-500">
+                    <h2 class="text-lg font-semibold mb-3 flex items-center text-emerald-700">
+                        <span class="mr-2">📄</span> Código C++
+                    </h2>
+                    <pre class="text-sm bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto leading-relaxed">
+<div id="line1">Nodo* construir(vector&lt;char&gt;&amp; d, int i) {</div>
+<div id="line2">  if (i >= d.size()) return nullptr;</div>
+<div id="line3">  Nodo* n = new Nodo(d[i]);</div>
+<div id="line4">  n->izq = construir(d, 2 * i + 1);</div>
+<div id="line5">  n->der = construir(d, 2 * i + 2);</div>
+<div id="line6">  return n;</div>
+}
+                    </pre>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl shadow-md border-t-4 border-blue-400">
+                    <div class="flex justify-between items-center mb-3">
+                        <h2 class="text-lg font-semibold text-blue-700">Pila (Stack)</h2>
+                        <span id="stack-count" class="text-xs font-bold bg-blue-100 text-blue-600 px-2 py-1 rounded-full">0 llamadas</span>
+                    </div>
+                    <div id="stack" class="space-y-2 max-h-[400px] overflow-y-auto">
+                        <div class="text-gray-400 text-center py-4 italic text-sm">Pila vacía</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel Central: Visualización del Árbol -->
+            <div class="lg:col-span-2 space-y-6 text-center">
+                <div class="bg-white p-6 rounded-xl shadow-md min-h-[500px] relative overflow-hidden">
+                    <div class="flex justify-center items-center mb-6 overflow-x-auto pb-2">
+                        <div class="flex space-x-1" id="array-container"></div>
+                    </div>
+                    
+                    <svg id="tree-svg" class="w-full h-[380px]" viewBox="0 0 600 350"></svg>
+                    
+                    <div id="explanation-box" class="absolute bottom-4 left-4 right-4 bg-emerald-50 border border-emerald-200 p-4 rounded-lg text-sm text-emerald-800 shadow-sm min-h-[90px] flex items-center">
+                        Presiona "Siguiente Paso" para ver cómo se crea el primer nodo.
+                    </div>
+                </div>
+
+                <!-- Controles -->
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button id="prevBtn" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors disabled:opacity-50">Anterior</button>
+                    <button id="nextBtn" class="px-6 py-2 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors shadow-lg">Siguiente Paso</button>
+                    <button id="resetBtn" class="px-6 py-2 bg-white border border-gray-300 text-gray-600 rounded-lg font-medium hover:bg-gray-50 transition-colors">Reiniciar</button>
+                    <div class="w-full text-xs text-gray-400 mt-2">Paso: <span id="step-counter">0</span> / <span id="total-steps">0</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const data = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k'];
+        let currentStep = -1;
+        const stackState = [];
+        
+        function getPos(i) {
+            const level = Math.floor(Math.log2(i + 1));
+            const levelNodes = Math.pow(2, level);
+            const indexInLevel = i - (levelNodes - 1);
+            const xSpace = 600 / (levelNodes + 1);
+            return {
+                x: xSpace * (indexInLevel + 1),
+                y: 40 + (level * 75)
+            };
+        }
+
+        // Generación dinámica de pasos para recorrer TODO el árbol
+        const steps = [];
+        function generateSteps(i) {
+            const currentIdx = i;
+            
+            // 1. Entrar a la función
+            steps.push({ line: 1, i: currentIdx, text: `Llamada a construir con i = ${currentIdx}.`, stackOp: 'push' });
+            
+            // 2. Chequeo de base
+            if (currentIdx >= data.size || currentIdx >= 11) {
+                steps.push({ line: 2, i: currentIdx, text: `Base: i (${currentIdx}) >= ${data.length}. Retornamos NULL.`, stackOp: 'pop' });
+                return;
+            }
+            
+            steps.push({ line: 2, i: currentIdx, text: `Chequeo: i (${currentIdx}) es válido.` });
+
+            // 3. Crear Nodo
+            steps.push({ line: 3, i: currentIdx, node: currentIdx, text: `Creamos nodo '${data[currentIdx]}' en la posición ${currentIdx}.` });
+
+            // 4. Ir a la izquierda
+            const leftIdx = 2 * currentIdx + 1;
+            steps.push({ line: 4, i: currentIdx, text: `Buscando hijo IZQUIERDO de '${data[currentIdx]}': 2*${currentIdx}+1 = ${leftIdx}.` });
+            generateSteps(leftIdx);
+
+            // 5. Ir a la derecha
+            const rightIdx = 2 * currentIdx + 2;
+            steps.push({ line: 5, i: currentIdx, text: `Buscando hijo DERECHO de '${data[currentIdx]}': 2*${currentIdx}+2 = ${rightIdx}.` });
+            generateSteps(rightIdx);
+
+            // 6. Retornar nodo listo
+            steps.push({ line: 6, i: currentIdx, text: `Nodo '${data[currentIdx]}' completado con sus hijos. Retornando al padre.`, stackOp: 'pop' });
+        }
+
+        generateSteps(0);
+        document.getElementById('total-steps').innerText = steps.length;
+
+        function renderArray() {
+            const container = document.getElementById('array-container');
+            container.innerHTML = '';
+            data.forEach((char, idx) => {
+                const div = document.createElement('div');
+                div.id = `arr-${idx}`;
+                div.className = "flex-shrink-0 w-8 h-10 bg-gray-200 border border-gray-400 flex flex-col items-center justify-center rounded transition-all";
+                div.innerHTML = `<span class="font-bold text-gray-800">${char}</span><span class="text-[9px] text-gray-500">${idx}</span>`;
+                container.appendChild(div);
+            });
+        }
+
+        function updateUI() {
+            const step = steps[currentStep];
+            if (!step) return;
+
+            // Contador
+            document.getElementById('step-counter').innerText = currentStep + 1;
+
+            // Resaltado de código
+            document.querySelectorAll('pre div').forEach(d => d.className = '');
+            document.getElementById(`line${step.line}`).className = 'code-highlight';
+
+            // Explicación
+            document.getElementById('explanation-box').innerHTML = `
+                <div class="flex flex-col w-full">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="font-bold text-emerald-900">Acción:</span>
+                        <span class="text-[10px] bg-emerald-200 px-2 py-0.5 rounded text-emerald-700 font-mono">i = ${step.i}</span>
+                    </div>
+                    <span>${step.text}</span>
+                </div>
+            `;
+
+            // Resaltar array
+            document.querySelectorAll('[id^="arr-"]').forEach(d => d.classList.remove('bg-emerald-300', 'ring-2', 'ring-emerald-500', 'scale-110'));
+            const arrEl = document.getElementById(`arr-${step.i}`);
+            if (arrEl && step.i < 11) {
+                arrEl.classList.add('bg-emerald-300', 'ring-2', 'ring-emerald-500', 'scale-110');
+            }
+
+            // Gestionar Pila visualmente
+            if (step.stackOp === 'push') {
+                stackState.push(step.i);
+            } else if (step.stackOp === 'pop') {
+                stackState.pop();
+            }
+
+            const stackContainer = document.getElementById('stack');
+            document.getElementById('stack-count').innerText = `${stackState.length} llamadas`;
+            
+            stackContainer.innerHTML = stackState.map((val, idx) => `
+                <div class="stack-item p-2 bg-blue-50 border-l-4 border-blue-500 rounded flex justify-between items-center text-xs shadow-sm">
+                    <span class="font-mono">construir(datos, <b>${val}</b>)</span>
+                    <span class="text-[9px] bg-blue-200 px-1 rounded font-bold text-blue-700">LVL ${Math.floor(Math.log2(val+1))}</span>
+                </div>
+            `).reverse().join('') || '<div class="text-gray-400 text-center py-4 italic text-sm">Pila vacía</div>';
+
+            // Dibujar Árbol
+            if (step.node !== undefined) {
+                drawNode(step.node);
+            }
+
+            document.getElementById('prevBtn').disabled = currentStep <= 0;
+            document.getElementById('nextBtn').disabled = currentStep >= steps.length - 1;
+        }
+
+        function drawNode(index) {
+            const svg = document.getElementById('tree-svg');
+            const pos = getPos(index);
+            if (document.getElementById(`node-${index}`)) return;
+
+            if (index > 0) {
+                const parentIdx = Math.floor((index - 1) / 2);
+                const parentPos = getPos(parentIdx);
+                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                line.setAttribute("x1", parentPos.x);
+                line.setAttribute("y1", parentPos.y);
+                line.setAttribute("x2", pos.x);
+                line.setAttribute("y2", pos.y);
+                line.setAttribute("class", "tree-line");
+                line.setAttribute("style", "opacity: 0");
+                svg.insertBefore(line, svg.firstChild);
+                setTimeout(() => line.style.opacity = "1", 50);
+            }
+
+            const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            group.setAttribute("id", `node-${index}`);
+            group.setAttribute("transform", `translate(${pos.x}, ${pos.y})`);
+            group.style.opacity = "0";
+            group.style.transition = "opacity 0.5s";
+
+            const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            circle.setAttribute("r", "18");
+            circle.setAttribute("fill", "white");
+            circle.setAttribute("stroke", "#10b981");
+            circle.setAttribute("stroke-width", "2");
+
+            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            text.textContent = data[index];
+            text.setAttribute("text-anchor", "middle");
+            text.setAttribute("dy", "5");
+            text.setAttribute("font-weight", "bold");
+            text.setAttribute("fill", "#065f46");
+
+            const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            label.textContent = `i=${index}`;
+            label.setAttribute("text-anchor", "middle");
+            label.setAttribute("dy", "32");
+            label.setAttribute("font-size", "10");
+            label.setAttribute("fill", "#64748b");
+
+            group.appendChild(circle);
+            group.appendChild(text);
+            group.appendChild(label);
+            svg.appendChild(group);
+            setTimeout(() => group.style.opacity = "1", 50);
+        }
+
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            if (currentStep < steps.length - 1) {
+                currentStep++;
+                updateUI();
+            }
+        });
+
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            // Reiniciamos y volvemos a correr hasta el paso anterior para simplificar el estado visual
+            const targetStep = currentStep - 1;
+            document.getElementById('resetBtn').click();
+            while(currentStep < targetStep) {
+                currentStep++;
+                updateUI();
+            }
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            currentStep = -1;
+            stackState.length = 0;
+            document.getElementById('tree-svg').innerHTML = '';
+            document.getElementById('stack').innerHTML = '<div class="text-gray-400 text-center py-4 italic text-sm">Pila vacía</div>';
+            document.getElementById('stack-count').innerText = "0 llamadas";
+            document.querySelectorAll('pre div').forEach(d => d.className = '');
+            renderArray();
+            document.getElementById('explanation-box').innerText = "Presiona 'Siguiente Paso' para comenzar.";
+            document.getElementById('step-counter').innerText = "0";
+        });
+
+        renderArray();
+    </script>
+</body>
+</html>
